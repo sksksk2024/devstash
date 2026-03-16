@@ -16,4 +16,4 @@
 
 ## History
 
-<!-- Keep this updated. Earliest to latest -->
+- **2026-03-16**: Initial Next.js 15 + Tailwind CSS setup committed (chore: initial next.js and tailwind setup)
