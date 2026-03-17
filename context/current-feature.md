@@ -1,26 +1,55 @@
 # Current Feature
 
-**Dashboard UI Phase 3**
+## Neon Postgres + Prisma Setup
 
-## Status
+**Status: In Progress**
 
-**Completed**
+### Goals
 
-## Goals
+- Set up Prisma 7 with Neon PostgreSQL serverless database
+- Create initial schema with all required models from project-overview.md
+- Include NextAuth models (Account, Session, VerificationToken)
+- Configure proper relationships and cascade deletes
+- Add appropriate indexes for performance
+- Set up environment variables for database connection
+- Create initial migration and verify schema sync
+- Seed system item types on first run
 
-- Main content area displaying latest collections
-- Pinned items section
-- Recent items section
-- Proper layout integration with existing sidebar
+### Notes
 
-## Notes
+- Use Prisma 7 (breaking changes from previous versions) - review upgrade guide thoroughly
+- ALWAYS use `prisma migrate dev` for schema changes (never `db push`)
+- Production must run `prisma migrate deploy` before app starts
+- Schema includes: User, Account, Session, VerificationToken, ItemType, Collection, Item, ItemCollection, Tag, TagsOnItems
+- System item types (snippet, prompt, command, note, file, image, link) must be seeded and cannot be modified
+- Follow database standards in `context/coding-standards.md`
+- Reference full schema in `context/project-overview.md` under "Data Models & Prisma Schema"
 
-- Reference `src/lib/mock-data.ts` for data structure
-- This is phase 3 of 3 for the dashboard UI layout
-- Build upon the completed Phase 2 sidebar implementation
-- Main area should show collections, pinned items, and recent items in an organized layout
+### References
 
-## History
+- Database spec: `context/features/database-spec.md`
+- Project overview: `context/project-overview.md`
+- Coding standards: `context/coding-standards.md`
+- Prisma 7 upgrade guide: https://www.prisma.io/docs/orm/more/upgrade-guides/upgrading-versions/upgrading-to-prisma-7
+- Prisma Postgres quickstart: https://www.prisma.io/docs/getting-started/prisma-orm/quickstart/prisma-postgres
+
+### Tasks
+
+- [x] Install Prisma dependencies (`prisma`, `@prisma/client`)
+- [x] Initialize Prisma with Neon PostgreSQL provider
+- [x] Create `prisma/schema.prisma` with complete schema from project-overview.md
+- [x] Configure datasource with `DATABASE_URL` env variable (Prisma 7 style in `prisma.config.ts`)
+- [x] Create `prisma/seed.ts` for system item types
+- [x] Configure seed in `package.json` scripts
+- [ ] Run initial migration (`prisma migrate dev --name init`) - **pending DATABASE_URL**
+- [x] Generate Prisma client (`prisma generate`)
+- [x] Create Prisma client singleton (`src/lib/prisma.ts`) with Prisma 7 configuration
+- [x] Verify `.gitignore` includes `.env`
+- [x] Create `.env.example` template
+- [x] Create comprehensive setup documentation (`DATABASE_SETUP.md`)
+- [ ] Test database connection with simple query - **pending migration**
+
+### History
 
 - **2026-03-16**: Initial Next.js 15 + Tailwind CSS setup committed (chore: initial next.js and tailwind setup)
 - **2026-03-17**: Created `src/lib/mock-data.ts` with mock data structure
@@ -43,3 +72,15 @@
   - Pinned Items section (conditional display)
   - Recent Items section with sorting by last used
   - Icons styled consistently with sidebar navigation
+- **2026-03-17**: Completed Prisma 7 setup:
+  - Installed `prisma` and `@prisma/client` (v7.5.0)
+  - Initialized Prisma with `prisma.config.ts` configuration
+  - Created complete schema with all models (User, Account, Session, VerificationToken, ItemType, Item, Collection, ItemCollection, Tag, TagsOnItems)
+  - Updated schema for Prisma 7 (removed `url` from datasource, configured in `prisma.config.ts`)
+  - Created seed script for 7 system item types
+  - Added npm scripts for Prisma operations
+  - Generated Prisma client
+  - Created `src/lib/prisma.ts` singleton with `datasourceUrl` option
+  - Created `.env.example` template
+  - Created `DATABASE_SETUP.md` with comprehensive instructions
+  - **Next**: User must provide actual Neon DATABASE_URL and run `npm run prisma:migrate`
