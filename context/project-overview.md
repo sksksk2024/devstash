@@ -24,15 +24,15 @@
 
 Developers scatter their essential knowledge across too many places:
 
-| What | Where it lives |
-|---|---|
-| Code snippets | VS Code, Notion |
-| AI prompts | Chat history |
-| Context files | Buried in projects |
-| Useful links | Browser bookmarks |
-| Documentation | Random folders |
-| Commands | `.txt` files, bash history |
-| Templates | GitHub Gists |
+| What          | Where it lives             |
+| ------------- | -------------------------- |
+| Code snippets | VS Code, Notion            |
+| AI prompts    | Chat history               |
+| Context files | Buried in projects         |
+| Useful links  | Browser bookmarks          |
+| Documentation | Random folders             |
+| Commands      | `.txt` files, bash history |
+| Templates     | GitHub Gists               |
 
 This creates constant context switching, lost knowledge, and inconsistent workflows. **DevStash** consolidates everything into one fast, keyboard-friendly, AI-enhanced hub.
 
@@ -40,30 +40,30 @@ This creates constant context switching, lost knowledge, and inconsistent workfl
 
 ## Target Users
 
-| User | Core Need |
-|---|---|
-| **Everyday Developer** | Fast grab for snippets, prompts, commands, links |
-| **AI-First Developer** | Store prompts, contexts, workflows, system messages |
-| **Content Creator / Educator** | Organize code blocks, explanations, course notes |
-| **Full-Stack Builder** | Collect patterns, boilerplates, API examples |
+| User                           | Core Need                                           |
+| ------------------------------ | --------------------------------------------------- |
+| **Everyday Developer**         | Fast grab for snippets, prompts, commands, links    |
+| **AI-First Developer**         | Store prompts, contexts, workflows, system messages |
+| **Content Creator / Educator** | Organize code blocks, explanations, course notes    |
+| **Full-Stack Builder**         | Collect patterns, boilerplates, API examples        |
 
 ---
 
 ## Tech Stack
 
-| Layer | Technology |
-|---|---|
-| **Framework** | [Next.js 15](https://nextjs.org/) / [React 19](https://react.dev/) |
-| **Language** | [TypeScript](https://www.typescriptlang.org/) |
-| **Database** | [Neon](https://neon.tech/) (Serverless PostgreSQL) |
-| **ORM** | [Prisma 7](https://www.prisma.io/docs) |
-| **Auth** | [NextAuth v5](https://authjs.dev/) — Email/Password + GitHub OAuth |
-| **File Storage** | [Cloudflare R2](https://developers.cloudflare.com/r2/) |
-| **AI** | [OpenAI](https://platform.openai.com/) — `gpt-4o-mini` model |
-| **CSS** | [Tailwind CSS v4](https://tailwindcss.com/) |
-| **UI Components** | [shadcn/ui](https://ui.shadcn.com/) |
-| **Payments** | [Stripe](https://stripe.com/docs) |
-| **Caching** | Redis *(optional, future)* |
+| Layer             | Technology                                                         |
+| ----------------- | ------------------------------------------------------------------ |
+| **Framework**     | [Next.js 15](https://nextjs.org/) / [React 19](https://react.dev/) |
+| **Language**      | [TypeScript](https://www.typescriptlang.org/)                      |
+| **Database**      | [Neon](https://neon.tech/) (Serverless PostgreSQL)                 |
+| **ORM**           | [Prisma 7](https://www.prisma.io/docs)                             |
+| **Auth**          | [NextAuth v5](https://authjs.dev/) — Email/Password + GitHub OAuth |
+| **File Storage**  | [Cloudflare R2](https://developers.cloudflare.com/r2/)             |
+| **AI**            | [OpenAI](https://platform.openai.com/) — `gpt-4o-mini` model       |
+| **CSS**           | [Tailwind CSS v4](https://tailwindcss.com/)                        |
+| **UI Components** | [shadcn/ui](https://ui.shadcn.com/)                                |
+| **Payments**      | [Stripe](https://stripe.com/docs)                                  |
+| **Caching**       | Redis _(optional, future)_                                         |
 
 > ⚠️ **Migration Rule:** Never use `db push` or manually alter the database schema. All schema changes must go through **Prisma migrations** (`prisma migrate dev` → `prisma migrate deploy`).
 
@@ -97,6 +97,7 @@ This creates constant context switching, lost knowledge, and inconsistent workfl
 ```
 
 **Rendering strategy:**
+
 - SSR for dashboard, collections, item list pages
 - Dynamic components (drawers, search, modals) as client components
 - API routes for all mutations (create/update/delete items, file uploads, AI calls)
@@ -287,15 +288,15 @@ model TagsOnItems {
 
 ## Item Types Reference
 
-| Type | Icon | Color | Content Kind | Route |
-|---|---|---|---|---|
-| **Snippet** | `Code` | `#3b82f6` (Blue) | TEXT | `/items/snippets` |
-| **Prompt** | `Sparkles` | `#8b5cf6` (Purple) | TEXT | `/items/prompts` |
-| **Command** | `Terminal` | `#f97316` (Orange) | TEXT | `/items/commands` |
-| **Note** | `StickyNote` | `#fde047` (Yellow) | TEXT | `/items/notes` |
-| **File** | `File` | `#6b7280` (Gray) | FILE | `/items/files` *(Pro)* |
-| **Image** | `Image` | `#ec4899` (Pink) | FILE | `/items/images` *(Pro)* |
-| **Link** | `Link` | `#10b981` (Emerald) | URL | `/items/links` |
+| Type        | Icon         | Color               | Content Kind | Route                   |
+| ----------- | ------------ | ------------------- | ------------ | ----------------------- |
+| **Snippet** | `Code`       | `#3b82f6` (Blue)    | TEXT         | `/items/snippets`       |
+| **Prompt**  | `Sparkles`   | `#8b5cf6` (Purple)  | TEXT         | `/items/prompts`        |
+| **Command** | `Terminal`   | `#f97316` (Orange)  | TEXT         | `/items/commands`       |
+| **Note**    | `StickyNote` | `#fde047` (Yellow)  | TEXT         | `/items/notes`          |
+| **File**    | `File`       | `#6b7280` (Gray)    | FILE         | `/items/files` _(Pro)_  |
+| **Image**   | `Image`      | `#ec4899` (Pink)    | FILE         | `/items/images` _(Pro)_ |
+| **Link**    | `Link`       | `#10b981` (Emerald) | URL          | `/items/links`          |
 
 > System types are seeded on first run and cannot be edited or deleted by users.
 
@@ -304,13 +305,13 @@ model TagsOnItems {
 ```typescript
 // prisma/seed.ts
 const systemTypes = [
-  { name: "snippet",  icon: "Code",       color: "#3b82f6", isSystem: true },
-  { name: "prompt",   icon: "Sparkles",   color: "#8b5cf6", isSystem: true },
-  { name: "command",  icon: "Terminal",   color: "#f97316", isSystem: true },
-  { name: "note",     icon: "StickyNote", color: "#fde047", isSystem: true },
-  { name: "file",     icon: "File",       color: "#6b7280", isSystem: true },
-  { name: "image",    icon: "Image",      color: "#ec4899", isSystem: true },
-  { name: "link",     icon: "Link",       color: "#10b981", isSystem: true },
+  { name: "snippet", icon: "Code", color: "#3b82f6", isSystem: true },
+  { name: "prompt", icon: "Sparkles", color: "#8b5cf6", isSystem: true },
+  { name: "command", icon: "Terminal", color: "#f97316", isSystem: true },
+  { name: "note", icon: "StickyNote", color: "#fde047", isSystem: true },
+  { name: "file", icon: "File", color: "#6b7280", isSystem: true },
+  { name: "image", icon: "Image", color: "#ec4899", isSystem: true },
+  { name: "link", icon: "Link", color: "#10b981", isSystem: true },
 ];
 ```
 
@@ -337,7 +338,7 @@ const systemTypes = [
 
 - **File & Image uploads** — Stored in Cloudflare R2
 - **Export** — Download data as JSON or ZIP
-- **Custom item types** *(future)*
+- **Custom item types** _(future)_
 - **AI: Auto-tag suggestions** — Suggest relevant tags on item save
 - **AI: Summarize** — One-click AI summary of any item
 - **AI: Explain This Code** — Explain a code snippet in plain English
@@ -376,6 +377,13 @@ Payments are handled via **Stripe**. Store `stripeCustomerId` and `stripeSubscri
 - Syntax highlighting for code blocks (e.g. [Shiki](https://shiki.style/) or [highlight.js](https://highlightjs.org/))
 - References: [Notion](https://notion.so), [Linear](https://linear.app), [Raycast](https://raycast.com)
 
+### Screenshots
+
+Refer to the screenshots below as a base for the dashboard UI. It does not have to be exact. Use it as a reference:
+
+- context/screenshots/dashboard-ui-main.png
+- context/screenshots/dashboard-ui-drawer.png
+
 ### Layout
 
 ```
@@ -413,28 +421,28 @@ Payments are handled via **Stripe**. Store `stripeCustomerId` and `stripeSubscri
 
 ## URL Structure
 
-| Route | Description |
-|---|---|
-| `/` | Landing / marketing page |
-| `/dashboard` | Main dashboard (collections + recent items) |
-| `/items` | All items |
-| `/items/snippets` | Filtered by type |
-| `/items/prompts` | Filtered by type |
-| `/items/commands` | Filtered by type |
-| `/items/notes` | Filtered by type |
-| `/items/links` | Filtered by type |
-| `/items/files` | Filtered by type *(Pro)* |
-| `/items/images` | Filtered by type *(Pro)* |
-| `/collections` | All collections |
-| `/collections/[id]` | Single collection view |
-| `/settings` | Account, billing, preferences |
-| `/api/items` | CRUD for items |
-| `/api/collections` | CRUD for collections |
-| `/api/uploads` | File upload to R2 |
-| `/api/ai/tag` | AI auto-tag |
-| `/api/ai/explain` | AI code explain |
-| `/api/ai/summarize` | AI summarize |
-| `/api/ai/optimize-prompt` | AI prompt optimizer |
+| Route                     | Description                                 |
+| ------------------------- | ------------------------------------------- |
+| `/`                       | Landing / marketing page                    |
+| `/dashboard`              | Main dashboard (collections + recent items) |
+| `/items`                  | All items                                   |
+| `/items/snippets`         | Filtered by type                            |
+| `/items/prompts`          | Filtered by type                            |
+| `/items/commands`         | Filtered by type                            |
+| `/items/notes`            | Filtered by type                            |
+| `/items/links`            | Filtered by type                            |
+| `/items/files`            | Filtered by type _(Pro)_                    |
+| `/items/images`           | Filtered by type _(Pro)_                    |
+| `/collections`            | All collections                             |
+| `/collections/[id]`       | Single collection view                      |
+| `/settings`               | Account, billing, preferences               |
+| `/api/items`              | CRUD for items                              |
+| `/api/collections`        | CRUD for collections                        |
+| `/api/uploads`            | File upload to R2                           |
+| `/api/ai/tag`             | AI auto-tag                                 |
+| `/api/ai/explain`         | AI code explain                             |
+| `/api/ai/summarize`       | AI summarize                                |
+| `/api/ai/optimize-prompt` | AI prompt optimizer                         |
 
 ---
 
@@ -442,33 +450,33 @@ Payments are handled via **Stripe**. Store `stripeCustomerId` and `stripeSubscri
 
 ### Official Docs
 
-| Package | Link |
-|---|---|
-| Next.js 15 | https://nextjs.org/docs |
-| React 19 | https://react.dev |
-| Prisma 7 | https://www.prisma.io/docs |
-| NextAuth v5 | https://authjs.dev/getting-started |
-| Neon | https://neon.tech/docs |
-| Cloudflare R2 | https://developers.cloudflare.com/r2/ |
-| Tailwind CSS v4 | https://tailwindcss.com/docs |
-| shadcn/ui | https://ui.shadcn.com/docs |
-| Stripe | https://stripe.com/docs |
+| Package         | Link                                       |
+| --------------- | ------------------------------------------ |
+| Next.js 15      | https://nextjs.org/docs                    |
+| React 19        | https://react.dev                          |
+| Prisma 7        | https://www.prisma.io/docs                 |
+| NextAuth v5     | https://authjs.dev/getting-started         |
+| Neon            | https://neon.tech/docs                     |
+| Cloudflare R2   | https://developers.cloudflare.com/r2/      |
+| Tailwind CSS v4 | https://tailwindcss.com/docs               |
+| shadcn/ui       | https://ui.shadcn.com/docs                 |
+| Stripe          | https://stripe.com/docs                    |
 | OpenAI Node SDK | https://platform.openai.com/docs/libraries |
-| Lucide Icons | https://lucide.dev/icons/ |
+| Lucide Icons    | https://lucide.dev/icons/                  |
 
 ### Suggested Additional Packages
 
-| Package | Purpose |
-|---|---|
-| [`@aws-sdk/client-s3`](https://www.npmjs.com/package/@aws-sdk/client-s3) | R2 file uploads (S3-compatible) |
-| [`shiki`](https://shiki.style/) | Syntax highlighting |
-| [`zod`](https://zod.dev/) | Schema validation for API routes |
-| [`nuqs`](https://nuqs.47ng.com/) | Type-safe URL search params |
-| [`sonner`](https://sonner.emilkowal.ski/) | Toast notifications |
-| [`cmdk`](https://cmdk.paco.me/) | Command palette / quick search |
-| [`@tanstack/react-query`](https://tanstack.com/query) | Client-side data fetching & caching |
-| [`uploadthing`](https://uploadthing.com/) | Alternative to direct R2 if simpler DX desired |
+| Package                                                                  | Purpose                                        |
+| ------------------------------------------------------------------------ | ---------------------------------------------- |
+| [`@aws-sdk/client-s3`](https://www.npmjs.com/package/@aws-sdk/client-s3) | R2 file uploads (S3-compatible)                |
+| [`shiki`](https://shiki.style/)                                          | Syntax highlighting                            |
+| [`zod`](https://zod.dev/)                                                | Schema validation for API routes               |
+| [`nuqs`](https://nuqs.47ng.com/)                                         | Type-safe URL search params                    |
+| [`sonner`](https://sonner.emilkowal.ski/)                                | Toast notifications                            |
+| [`cmdk`](https://cmdk.paco.me/)                                          | Command palette / quick search                 |
+| [`@tanstack/react-query`](https://tanstack.com/query)                    | Client-side data fetching & caching            |
+| [`uploadthing`](https://uploadthing.com/)                                | Alternative to direct R2 if simpler DX desired |
 
 ---
 
-*Last updated: March 2026*
+_Last updated: March 2026_
