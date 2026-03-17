@@ -1,27 +1,24 @@
 # Current Feature
 
-**Dashboard UI Phase 2**
+**Dashboard UI Phase 3**
 
 ## Status
 
-**Completed**
+**In Progress**
 
 ## Goals
 
-- Collapsible sidebar
-- Items/types with links to /items/TYPE (eg.items/snippets)
-- Favorite collections
-- Most recent collections
-- User avatar area at the bottom
-- Drawer icon to open/close sidebar
-- Always a drawer on mobile view
+- Main content area displaying latest collections
+- Pinned items section
+- Recent items section
+- Proper layout integration with existing sidebar
 
 ## Notes
 
-- Use `context/screenshots/dashboard-ui-main.png` as visual reference
 - Reference `src/lib/mock-data.ts` for data structure
-- This is phase 2 of 3 for the dashboard UI layout
-- Next phase: `dashboard-phase-3-spec.md`
+- This is phase 3 of 3 for the dashboard UI layout
+- Build upon the completed Phase 2 sidebar implementation
+- Main area should show collections, pinned items, and recent items in an organized layout
 
 ## History
 
@@ -39,3 +36,4 @@
   - Tight spacing throughout to fit content without scrolling
   - Settings button always visible (even when collapsed)
   - Collapsed state: vertical layout for user area (avatar above, settings below)
+- **2026-03-17**: Started Phase 3 - Main area with latest collections, pinned items, and recent items

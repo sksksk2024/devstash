@@ -52,8 +52,9 @@ export default function Sidebar() {
   const pathname = usePathname();
 
   const favoriteCollections = collections.filter((c) => c.isFavorite);
+  // Deterministic sorting to avoid hydration mismatch (sort by itemCount descending)
   const recentCollections = [...collections]
-    .sort(() => Math.random() - 0.5)
+    .sort((a, b) => b.itemCount - a.itemCount)
     .slice(0, 3);
 
   const toggleSidebar = () => {
