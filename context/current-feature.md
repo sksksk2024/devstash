@@ -2,7 +2,7 @@
 
 ## Neon Postgres + Prisma Setup
 
-**Status: In Progress**
+**Status: Complete**
 
 ### Goals
 
@@ -41,13 +41,17 @@
 - [x] Configure datasource with `DATABASE_URL` env variable (Prisma 7 style in `prisma.config.ts`)
 - [x] Create `prisma/seed.ts` for system item types
 - [x] Configure seed in `package.json` scripts
-- [ ] Run initial migration (`prisma migrate dev --name init`) - **pending DATABASE_URL**
+- [x] Run initial migration (`prisma migrate dev --name init`)
 - [x] Generate Prisma client (`prisma generate`)
 - [x] Create Prisma client singleton (`src/lib/prisma.ts`) with Prisma 7 configuration
 - [x] Verify `.gitignore` includes `.env`
 - [x] Create `.env.example` template
 - [x] Create comprehensive setup documentation (`DATABASE_SETUP.md`)
-- [ ] Test database connection with simple query - **pending migration**
+- [x] Test database connection with simple query
+- [x] Create comprehensive seed script with demo user, collections, and items per `context/features/seed-spec.md`
+- [x] Create `scripts/test-db.ts` for database connectivity testing
+- [x] Run seed to verify all data populates correctly
+- [x] Build project to verify TypeScript compilation
 
 ### History
 
@@ -72,15 +76,18 @@
   - Pinned Items section (conditional display)
   - Recent Items section with sorting by last used
   - Icons styled consistently with sidebar navigation
-- **2026-03-17**: Completed Prisma 7 setup:
-  - Installed `prisma` and `@prisma/client` (v7.5.0)
-  - Initialized Prisma with `prisma.config.ts` configuration
-  - Created complete schema with all models (User, Account, Session, VerificationToken, ItemType, Item, Collection, ItemCollection, Tag, TagsOnItems)
-  - Updated schema for Prisma 7 (removed `url` from datasource, configured in `prisma.config.ts`)
-  - Created seed script for 7 system item types
-  - Added npm scripts for Prisma operations
-  - Generated Prisma client
-  - Created `src/lib/prisma.ts` singleton with `datasourceUrl` option
-  - Created `.env.example` template
-  - Created `DATABASE_SETUP.md` with comprehensive instructions
-  - **Next**: User must provide actual Neon DATABASE_URL and run `npm run prisma:migrate`
+  - **2026-03-17**: Completed Prisma 7 setup:
+    - Installed `prisma` and `@prisma/client` (v7.5.0)
+    - Initialized Prisma with `prisma.config.ts` configuration
+    - Created complete schema with all models (User, Account, Session, VerificationToken, ItemType, Item, Collection, ItemCollection, Tag, TagsOnItems)
+    - Updated schema for Prisma 7 (removed `url` from datasource, configured in `prisma.config.ts`)
+    - Created seed script for 7 system item types
+    - Added npm scripts for Prisma operations
+    - Generated Prisma client
+    - Created `src/lib/prisma.ts` singleton with `datasourceUrl` option
+    - Created `.env.example` template
+    - Created `DATABASE_SETUP.md` with comprehensive instructions
+    - Ran initial migration and seeded database
+    - Created comprehensive seed script with demo user, 3 collections, and 17 items
+    - Created `scripts/test-db.ts` for database connectivity testing
+    - Verified build compiles successfully
