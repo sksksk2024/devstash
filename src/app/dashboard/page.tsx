@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import Sidebar from "@/components/Sidebar";
 
 export default function DashboardPage() {
   return (
@@ -20,9 +21,7 @@ export default function DashboardPage() {
 
       <div className="flex">
         {/* Sidebar */}
-        <aside className="w-64 border-r min-h-[calc(100vh-60px)]">
-          {/* Sidebar content will go here */}
-        </aside>
+        <Sidebar />
 
         {/* Main Content */}
         <main className="flex-1 p-6">
