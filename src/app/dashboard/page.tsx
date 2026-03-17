@@ -13,6 +13,7 @@ export default function DashboardPage() {
           <div className="flex items-center gap-4">
             <Input type="search" placeholder="Search..." className="w-64" />
             <Button>New Item</Button>
+            <Button variant="outline">New Collection</Button>
           </div>
         </div>
       </header>
@@ -20,24 +21,7 @@ export default function DashboardPage() {
       <div className="flex">
         {/* Sidebar */}
         <aside className="w-64 border-r min-h-[calc(100vh-60px)]">
-          <div className="p-4">
-            <h2 className="font-semibold mb-4">Item Types</h2>
-            <ul className="space-y-2">
-              <li>Snippets</li>
-              <li>Prompts</li>
-              <li>Commands</li>
-              <li>Notes</li>
-              <li>Links</li>
-            </ul>
-
-            <h2 className="font-semibold mt-6 mb-4">Collections</h2>
-            <ul className="space-y-2">
-              <li>React Patterns</li>
-              <li>Python Snippets</li>
-              <li>AI Prompts</li>
-              <li>Terminal Commands</li>
-            </ul>
-          </div>
+          {/* Sidebar content will go here */}
         </aside>
 
         {/* Main Content */}
