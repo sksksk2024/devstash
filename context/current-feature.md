@@ -1,38 +1,48 @@
 # Current Feature
 
-## Dashboard Collections Integration
+## Dashboard Items & Collections Integration
 
-**Status: ✅ Complete**
+**Status: In Progress**
 
 ### Goals
 
 - Replace dummy collection data in dashboard main area with actual database data
-- Fetch collections using Prisma from Neon PostgreSQL
+- Replace dummy item data (pinned, favorite, recent) with actual database data
+- Fetch collections and items using Prisma from Neon PostgreSQL
 - Display 6 collection cards with real data (matching current design)
 - Collection card border color derived from most-used content type in that collection
 - Show small icons of all content types present in each collection
-- Update collection stats display to reflect real data
+- Display item cards with color-coded borders and type tags
+- Show pinned items, favorite items, and recent items sections
+- Update collection stats (total items, collections count) to use real data
+- Update item stats (favorite items count) to use real data
 - Maintain existing UI/UX design and layout
 
 ### Notes
 
 - Use existing Prisma client singleton from `src/lib/prisma.ts`
-- Fetch collections directly in server component (no client-side fetching needed yet)
+- Fetch data directly in server components (no client-side fetching needed)
 - Collection border color logic: determine the most frequent ItemType in the collection and use its associated color
 - Display all content type icons that appear in the collection (small icons, likely in a row)
-- Keep the current design from Phase 3 - only replace data source
+- Item cards: left border color from item type, type tag with colored background
+- Keep the current design from Phase 3 - only replace data sources
 - Reference screenshot: `context/screenshots/dashboard-ui-main.png`
-- Do NOT add items underneath collections yet (that's a future task)
 - Follow database relationships: Collection ↔ Item ↔ ItemType via ItemCollection join table
+- Items can belong to multiple collections (many-to-many)
+- Pinned items always appear at the top of their section
+- Recent items sorted by `lastUsedAt` (fallback to `updatedAt`)
 
 ### References
 
 - Dashboard spec: `context/features/dashboard-collections-spec.md`
+- Items spec: `context/features/dashboard-items-spec.md`
 - Project overview: `context/project-overview.md`
 - Coding standards: `context/coding-standards.md`
 - Prisma client: `src/lib/prisma.ts`
 - Screenshot: `context/screenshots/dashboard-ui-main.png`
 - Dashboard page: `src/app/dashboard/page.tsx`
+- Collections DB functions: `src/lib/db/collections.ts`
+- Items DB functions: `src/lib/db/items.ts`
 
 ### Tasks
 
@@ -42,13 +52,21 @@
   - [x] Implement `getRecentCollections(limit: number)` function
   - [x] Implement helper to get content type distribution per collection
   - [x] Implement helper to determine dominant content type for border color
-- [x] Update `src/app/dashboard/page.tsx` to fetch real collections instead of mock data
+- [x] Create `src/lib/db/items.ts` with data fetching functions
+  - [x] Implement `getFavoriteItems(limit: number)`
+  - [x] Implement `getPinnedItems(limit: number)`
+  - [x] Implement `getRecentItems(limit: number)`
+- [x] Update `src/app/dashboard/page.tsx` to fetch real collections and items instead of mock data
 - [x] Implement collection card border color logic based on most-used content type
 - [x] Add display of content type icons for each collection
+- [x] Implement item card styling with left border and type tags
 - [x] Update collection stats (total items, collections count) to use real data
-- [x] Add Favorites, Pinned, and Recent items sections with real data
+- [x] Update item stats (favorite items count) to use real data
+- [x] Add Pinned Items section with conditional display (only if pinned items exist)
+- [x] Add Favorite Items section with conditional display (only if favorite items exist)
+- [x] Add Recent Items section with sorting by lastUsedAt
 - [x] Fix accessibility error in Sidebar (add SheetTitle)
-- [x] Test with seeded data to verify collections render correctly
+- [x] Test with seeded data to verify collections and items render correctly
 - [x] Verify TypeScript compilation and no build errors
 
 **History**
@@ -90,8 +108,14 @@
   - Created `scripts/test-db.ts` for database connectivity testing
   - Verified build compiles successfully
 - **2026-03-18**: Dashboard Collections Integration - Complete
-  - Replaced all mock data with real database queries
-  - Added Favorites, Pinned, and Recent items sections
+  - Replaced all mock collection data with real database queries
+  - Added Favorites, Pinned, and Recent items sections with real data
   - Fixed accessibility issues
   - Used Lucide icons instead of text abbreviations
   - All data displays correctly from Neon PostgreSQL
+- **2026-03-18**: Dashboard Items Integration - In Progress
+  - Verified items data fetching functions are implemented and working
+  - Dashboard page already displays pinned, favorite, and recent items from database
+  - Item cards correctly show type tags and color-coded borders
+  - Collection stats updated to show real item counts
+  - Pending final testing and verification
