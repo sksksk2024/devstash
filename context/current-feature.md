@@ -1,59 +1,57 @@
 # Current Feature
 
-## Neon Postgres + Prisma Setup
+## Dashboard Collections Integration
 
-**Status: Complete**
+**Status: ✅ Complete**
 
 ### Goals
 
-- Set up Prisma 7 with Neon PostgreSQL serverless database
-- Create initial schema with all required models from project-overview.md
-- Include NextAuth models (Account, Session, VerificationToken)
-- Configure proper relationships and cascade deletes
-- Add appropriate indexes for performance
-- Set up environment variables for database connection
-- Create initial migration and verify schema sync
-- Seed system item types on first run
+- Replace dummy collection data in dashboard main area with actual database data
+- Fetch collections using Prisma from Neon PostgreSQL
+- Display 6 collection cards with real data (matching current design)
+- Collection card border color derived from most-used content type in that collection
+- Show small icons of all content types present in each collection
+- Update collection stats display to reflect real data
+- Maintain existing UI/UX design and layout
 
 ### Notes
 
-- Use Prisma 7 (breaking changes from previous versions) - review upgrade guide thoroughly
-- ALWAYS use `prisma migrate dev` for schema changes (never `db push`)
-- Production must run `prisma migrate deploy` before app starts
-- Schema includes: User, Account, Session, VerificationToken, ItemType, Collection, Item, ItemCollection, Tag, TagsOnItems
-- System item types (snippet, prompt, command, note, file, image, link) must be seeded and cannot be modified
-- Follow database standards in `context/coding-standards.md`
-- Reference full schema in `context/project-overview.md` under "Data Models & Prisma Schema"
+- Use existing Prisma client singleton from `src/lib/prisma.ts`
+- Fetch collections directly in server component (no client-side fetching needed yet)
+- Collection border color logic: determine the most frequent ItemType in the collection and use its associated color
+- Display all content type icons that appear in the collection (small icons, likely in a row)
+- Keep the current design from Phase 3 - only replace data source
+- Reference screenshot: `context/screenshots/dashboard-ui-main.png`
+- Do NOT add items underneath collections yet (that's a future task)
+- Follow database relationships: Collection ↔ Item ↔ ItemType via ItemCollection join table
 
 ### References
 
-- Database spec: `context/features/database-spec.md`
+- Dashboard spec: `context/features/dashboard-collections-spec.md`
 - Project overview: `context/project-overview.md`
 - Coding standards: `context/coding-standards.md`
-- Prisma 7 upgrade guide: https://www.prisma.io/docs/orm/more/upgrade-guides/upgrading-versions/upgrading-to-prisma-7
-- Prisma Postgres quickstart: https://www.prisma.io/docs/getting-started/prisma-orm/quickstart/prisma-postgres
+- Prisma client: `src/lib/prisma.ts`
+- Screenshot: `context/screenshots/dashboard-ui-main.png`
+- Dashboard page: `src/app/dashboard/page.tsx`
 
 ### Tasks
 
-- [x] Install Prisma dependencies (`prisma`, `@prisma/client`)
-- [x] Initialize Prisma with Neon PostgreSQL provider
-- [x] Create `prisma/schema.prisma` with complete schema from project-overview.md
-- [x] Configure datasource with `DATABASE_URL` env variable (Prisma 7 style in `prisma.config.ts`)
-- [x] Create `prisma/seed.ts` for system item types
-- [x] Configure seed in `package.json` scripts
-- [x] Run initial migration (`prisma migrate dev --name init`)
-- [x] Generate Prisma client (`prisma generate`)
-- [x] Create Prisma client singleton (`src/lib/prisma.ts`) with Prisma 7 configuration
-- [x] Verify `.gitignore` includes `.env`
-- [x] Create `.env.example` template
-- [x] Create comprehensive setup documentation (`DATABASE_SETUP.md`)
-- [x] Test database connection with simple query
-- [x] Create comprehensive seed script with demo user, collections, and items per `context/features/seed-spec.md`
-- [x] Create `scripts/test-db.ts` for database connectivity testing
-- [x] Run seed to verify all data populates correctly
-- [x] Build project to verify TypeScript compilation
+- [x] Analyze current mock data structure in `src/lib/mock-data.ts` to understand expected shape
+- [x] Review Prisma schema in `prisma/schema.prisma` to understand relationships (Collection, Item, ItemType, ItemCollection)
+- [x] Create `src/lib/db/collections.ts` with data fetching functions
+  - [x] Implement `getRecentCollections(limit: number)` function
+  - [x] Implement helper to get content type distribution per collection
+  - [x] Implement helper to determine dominant content type for border color
+- [x] Update `src/app/dashboard/page.tsx` to fetch real collections instead of mock data
+- [x] Implement collection card border color logic based on most-used content type
+- [x] Add display of content type icons for each collection
+- [x] Update collection stats (total items, collections count) to use real data
+- [x] Add Favorites, Pinned, and Recent items sections with real data
+- [x] Fix accessibility error in Sidebar (add SheetTitle)
+- [x] Test with seeded data to verify collections render correctly
+- [x] Verify TypeScript compilation and no build errors
 
-### History
+**History**
 
 - **2026-03-16**: Initial Next.js 15 + Tailwind CSS setup committed (chore: initial next.js and tailwind setup)
 - **2026-03-17**: Created `src/lib/mock-data.ts` with mock data structure
@@ -76,18 +74,24 @@
   - Pinned Items section (conditional display)
   - Recent Items section with sorting by last used
   - Icons styled consistently with sidebar navigation
-  - **2026-03-17**: Completed Prisma 7 setup:
-    - Installed `prisma` and `@prisma/client` (v7.5.0)
-    - Initialized Prisma with `prisma.config.ts` configuration
-    - Created complete schema with all models (User, Account, Session, VerificationToken, ItemType, Item, Collection, ItemCollection, Tag, TagsOnItems)
-    - Updated schema for Prisma 7 (removed `url` from datasource, configured in `prisma.config.ts`)
-    - Created seed script for 7 system item types
-    - Added npm scripts for Prisma operations
-    - Generated Prisma client
-    - Created `src/lib/prisma.ts` singleton with `datasourceUrl` option
-    - Created `.env.example` template
-    - Created `DATABASE_SETUP.md` with comprehensive instructions
-    - Ran initial migration and seeded database
-    - Created comprehensive seed script with demo user, 3 collections, and 17 items
-    - Created `scripts/test-db.ts` for database connectivity testing
-    - Verified build compiles successfully
+- **2026-03-17**: Completed Prisma 7 setup:
+  - Installed `prisma` and `@prisma/client` (v7.5.0)
+  - Initialized Prisma with `prisma.config.ts` configuration
+  - Created complete schema with all models (User, Account, Session, VerificationToken, ItemType, Collection, Item, ItemCollection, Tag, TagsOnItems)
+  - Updated schema for Prisma 7 (removed `url` from datasource, configured in `prisma.config.ts`)
+  - Created seed script for 7 system item types
+  - Added npm scripts for Prisma operations
+  - Generated Prisma client
+  - Created `src/lib/prisma.ts` singleton with `datasourceUrl` option
+  - Created `.env.example` template
+  - Created `DATABASE_SETUP.md` with comprehensive instructions
+  - Ran initial migration and seeded database
+  - Created comprehensive seed script with demo user, 3 collections, and 17 items
+  - Created `scripts/test-db.ts` for database connectivity testing
+  - Verified build compiles successfully
+- **2026-03-18**: Dashboard Collections Integration - Complete
+  - Replaced all mock data with real database queries
+  - Added Favorites, Pinned, and Recent items sections
+  - Fixed accessibility issues
+  - Used Lucide icons instead of text abbreviations
+  - All data displays correctly from Neon PostgreSQL

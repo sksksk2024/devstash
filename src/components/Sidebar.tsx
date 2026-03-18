@@ -7,7 +7,12 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import {
   Code,
   Sparkles,
@@ -28,7 +33,21 @@ import {
   X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { itemTypes, collections, currentUser } from "@/lib/mock-data";
+import { itemTypes } from "@/lib/mock-data";
+import { ItemTypeStats } from "@/lib/db/collections";
+
+interface Collection {
+  id: string;
+  name: string;
+  description?: string | null;
+  isFavorite: boolean;
+  itemCount: number;
+}
+
+interface SidebarProps {
+  collections?: Collection[];
+  itemTypeStats?: ItemTypeStats[];
+}
 
 const iconMap: Record<
   string,
@@ -43,7 +62,10 @@ const iconMap: Record<
   Link: LinkIcon,
 };
 
-export default function Sidebar() {
+export default function Sidebar({
+  collections = [],
+  itemTypeStats = [],
+}: SidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [showAllFavorites, setShowAllFavorites] = useState(false);
   const [showAllRecent, setShowAllRecent] = useState(false);
@@ -56,6 +78,11 @@ export default function Sidebar() {
   const recentCollections = [...collections]
     .sort((a, b) => b.itemCount - a.itemCount)
     .slice(0, 3);
+
+  // Create a map of item type counts for quick lookup
+  const typeCountMap = new Map(
+    itemTypeStats.map((stat) => [stat.name, stat.count]),
+  );
 
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
@@ -76,6 +103,7 @@ export default function Sidebar() {
             {itemTypes.map((type) => {
               const Icon = iconMap[type.icon] || File;
               const isActive = pathname === `/items/${type.name}`;
+              const count = typeCountMap.get(type.name) || 0;
 
               return (
                 <Link
@@ -95,7 +123,7 @@ export default function Sidebar() {
                     <>
                       <span className="flex-1">{type.name}</span>
                       <span className="text-xs text-muted-foreground">
-                        {type.id === "type_snippet" ? 5 : 0}
+                        {count}
                       </span>
                     </>
                   )}
@@ -245,21 +273,15 @@ export default function Sidebar() {
         )}
       >
         <Avatar className="h-8 w-8">
-          <AvatarImage src={currentUser.image} alt={currentUser.name} />
-          <AvatarFallback>
-            {currentUser.name
-              .split(" ")
-              .map((n) => n[0])
-              .join("")
-              .toUpperCase()}
-          </AvatarFallback>
+          <AvatarImage src="/placeholder-avatar.jpg" alt="User" />
+          <AvatarFallback>DU</AvatarFallback>
         </Avatar>
         {!isCollapsed && (
           <>
             <div className="flex-1 overflow-hidden min-w-0">
-              <p className="truncate text-sm font-medium">{currentUser.name}</p>
+              <p className="truncate text-sm font-medium">Demo User</p>
               <p className="truncate text-xs text-muted-foreground">
-                {currentUser.email}
+                demo@devstash.io
               </p>
             </div>
           </>
@@ -313,6 +335,7 @@ export default function Sidebar() {
           className="p-0 w-64 flex flex-col"
           showCloseButton={false}
         >
+          <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
           {/* Mobile Header - aligned with Navigation */}
           <div className="flex items-center justify-between px-2 py-2 border-b">
             <h3 className="px-2 text-xs font-semibold uppercase text-muted-foreground">
