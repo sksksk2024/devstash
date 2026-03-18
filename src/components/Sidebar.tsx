@@ -42,6 +42,7 @@ interface Collection {
   description?: string | null;
   isFavorite: boolean;
   itemCount: number;
+  dominantTypeColor?: string;
 }
 
 interface SidebarProps {
@@ -242,7 +243,13 @@ export default function Sidebar({
                           )}
                           title={collection.name}
                         >
-                          <Clock className="h-4 w-4" />
+                          <div
+                            className="h-4 w-4 rounded-full shrink-0"
+                            style={{
+                              backgroundColor:
+                                collection.dominantTypeColor || "#6b7280",
+                            }}
+                          />
                           <span className="truncate flex-1">
                             {collection.name}
                           </span>
@@ -253,6 +260,21 @@ export default function Sidebar({
                       ),
                     )}
                   </nav>
+                </div>
+
+                {/* View All Collections Link */}
+                <div className="pl-6">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="w-full justify-start gap-2 h-7 px-2 text-xs"
+                    asChild
+                  >
+                    <Link href="/collections">
+                      <FolderOpen className="h-4 w-4" />
+                      <span>View all collections</span>
+                    </Link>
+                  </Button>
                 </div>
               </>
             )}
