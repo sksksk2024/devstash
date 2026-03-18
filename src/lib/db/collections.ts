@@ -19,8 +19,8 @@ export interface ItemTypeStats {
 }
 
 // Helper function to get the demo user ID
-// TODO: Replace with actual auth session user ID when auth is implemented
-async function getUserId(): Promise<string> {
+// Returns null if demo user doesn't exist (e.g., in production before seeding)
+async function getUserId(): Promise<string | null> {
   const user = await prisma.user.findFirst({
     where: {
       email: "demo@devstash.io",
@@ -30,11 +30,7 @@ async function getUserId(): Promise<string> {
     },
   });
 
-  if (!user) {
-    throw new Error("Demo user not found. Please run the seed script.");
-  }
-
-  return user.id;
+  return user?.id ?? null;
 }
 
 /**
@@ -44,6 +40,10 @@ export async function getRecentCollections(
   limit: number = 6,
 ): Promise<CollectionWithStats[]> {
   const userId = await getUserId();
+
+  if (!userId) {
+    return [];
+  }
 
   // Fetch collections with their items via ItemCollection join table
   const collections = await prisma.collection.findMany({
@@ -128,6 +128,10 @@ export async function getRecentCollections(
 export async function getItemTypeStats(): Promise<ItemTypeStats[]> {
   const userId = await getUserId();
 
+  if (!userId) {
+    return [];
+  }
+
   const stats = await prisma.item.groupBy({
     by: ["itemTypeId"],
     where: {
@@ -162,6 +166,11 @@ export async function getItemTypeStats(): Promise<ItemTypeStats[]> {
  */
 export async function getTotalItemCount(): Promise<number> {
   const userId = await getUserId();
+
+  if (!userId) {
+    return 0;
+  }
+
   const count = await prisma.item.count({
     where: {
       userId,
@@ -175,6 +184,11 @@ export async function getTotalItemCount(): Promise<number> {
  */
 export async function getFavoriteItemCount(): Promise<number> {
   const userId = await getUserId();
+
+  if (!userId) {
+    return 0;
+  }
+
   const count = await prisma.item.count({
     where: {
       userId,
@@ -189,6 +203,11 @@ export async function getFavoriteItemCount(): Promise<number> {
  */
 export async function getTotalCollectionCount(): Promise<number> {
   const userId = await getUserId();
+
+  if (!userId) {
+    return 0;
+  }
+
   const count = await prisma.collection.count({
     where: {
       userId,
@@ -202,6 +221,11 @@ export async function getTotalCollectionCount(): Promise<number> {
  */
 export async function getFavoriteCollectionCount(): Promise<number> {
   const userId = await getUserId();
+
+  if (!userId) {
+    return 0;
+  }
+
   const count = await prisma.collection.count({
     where: {
       userId,

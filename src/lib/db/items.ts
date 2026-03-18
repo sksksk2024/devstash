@@ -1,7 +1,8 @@
 import { prisma } from "@/lib/prisma";
 
 // Helper function to get the demo user ID
-async function getUserId(): Promise<string> {
+// Returns null if demo user doesn't exist (e.g., in production before seeding)
+async function getUserId(): Promise<string | null> {
   const user = await prisma.user.findFirst({
     where: {
       email: "demo@devstash.io",
@@ -11,11 +12,7 @@ async function getUserId(): Promise<string> {
     },
   });
 
-  if (!user) {
-    throw new Error("Demo user not found. Please run the seed script.");
-  }
-
-  return user.id;
+  return user?.id ?? null;
 }
 
 export interface ItemWithDetails {
@@ -57,6 +54,10 @@ export async function getFavoriteItems(
 ): Promise<ItemWithDetails[]> {
   const userId = await getUserId();
 
+  if (!userId) {
+    return [];
+  }
+
   const items = await prisma.item.findMany({
     where: {
       userId,
@@ -92,6 +93,10 @@ export async function getPinnedItems(
 ): Promise<ItemWithDetails[]> {
   const userId = await getUserId();
 
+  if (!userId) {
+    return [];
+  }
+
   const items = await prisma.item.findMany({
     where: {
       userId,
@@ -126,6 +131,10 @@ export async function getRecentItems(
   limit: number = 10,
 ): Promise<ItemWithDetails[]> {
   const userId = await getUserId();
+
+  if (!userId) {
+    return [];
+  }
 
   const items = await prisma.item.findMany({
     where: {
