@@ -35,6 +35,7 @@ async function getUserId(): Promise<string | null> {
 
 /**
  * Fetch recent collections with item counts and content type distribution
+ * Optimized: Uses 2 queries instead of N+1 (1 per collection)
  */
 export async function getRecentCollections(
   limit: number = 6,
@@ -45,81 +46,124 @@ export async function getRecentCollections(
     return [];
   }
 
-  // Fetch collections with their items via ItemCollection join table
-  const collections = await prisma.collection.findMany({
-    where: {
-      userId,
-    },
-    orderBy: {
-      updatedAt: "desc",
-    },
-    take: limit,
-    include: {
-      items: {
-        include: {
-          item: {
-            include: {
-              itemType: true,
-            },
+  try {
+    // Step 1: Fetch collections with item count using _count aggregation
+    const collections = await prisma.collection.findMany({
+      where: { userId },
+      orderBy: { updatedAt: "desc" },
+      take: limit,
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        isFavorite: true,
+        createdAt: true,
+        updatedAt: true,
+        _count: {
+          select: { items: true },
+        },
+      },
+    });
+
+    if (collections.length === 0) {
+      return [];
+    }
+
+    const collectionIds = collections.map((c) => c.id);
+
+    // Step 2: Fetch ALL items for these collections in a single query
+    // This replaces N separate queries (one per collection) with 1 query
+    const allItems = await prisma.item.findMany({
+      where: {
+        userId,
+        collections: {
+          some: {
+            collectionId: { in: collectionIds },
           },
         },
       },
-    },
-  });
-
-  // Transform to include stats
-  return collections.map((collection) => {
-    // Get actual items from the join table
-    const actualItems = collection.items.map((ic) => ic.item);
-    const itemCount = actualItems.length;
-
-    // Count occurrences of each item type
-    const typeCounts: Record<string, number> = {};
-    const contentTypeSet: Set<string> = new Set();
-
-    actualItems.forEach((item) => {
-      if (item.itemType) {
-        const typeName = item.itemType.name;
-        typeCounts[typeName] = (typeCounts[typeName] || 0) + 1;
-        contentTypeSet.add(typeName);
-      }
+      include: {
+        itemType: true,
+        collections: {
+          select: { collectionId: true },
+        },
+      },
     });
 
-    // Find the dominant type (most frequent)
-    let dominantTypeColor = "#6b7280"; // default gray
-    let maxCount = 0;
-    let dominantTypeName = "";
+    // Build a map of collectionId -> items and type distribution
+    const collectionItemsMap = new Map<string, typeof allItems>();
+    const collectionTypeCountsMap = new Map<string, Record<string, number>>();
+    const collectionContentTypesMap = new Map<string, Set<string>>();
 
-    for (const [typeName, count] of Object.entries(typeCounts)) {
-      if (count > maxCount) {
-        maxCount = count;
-        dominantTypeName = typeName;
+    // Initialize maps for each collection
+    for (const collectionId of collectionIds) {
+      collectionItemsMap.set(collectionId, []);
+      collectionTypeCountsMap.set(collectionId, {});
+      collectionContentTypesMap.set(collectionId, new Set());
+    }
+
+    // Distribute items into their collections and aggregate types
+    for (const item of allItems) {
+      // An item can belong to multiple collections, so we need to check each
+      for (const collRef of item.collections) {
+        const collectionId = collRef.collectionId;
+        if (collectionIds.includes(collectionId)) {
+          const collectionItems = collectionItemsMap.get(collectionId)!;
+          collectionItems.push(item);
+
+          const typeCounts = collectionTypeCountsMap.get(collectionId)!;
+          const contentTypes = collectionContentTypesMap.get(collectionId)!;
+
+          if (item.itemType) {
+            const typeName = item.itemType.name;
+            typeCounts[typeName] = (typeCounts[typeName] || 0) + 1;
+            contentTypes.add(typeName);
+          }
+        }
       }
     }
 
-    // If we have a dominant type, get its color from the database
-    if (dominantTypeName) {
-      // Find the item with the dominant type
-      const dominantItem = actualItems.find(
-        (item) => item.itemType?.name === dominantTypeName,
-      );
-      if (dominantItem?.itemType?.color) {
-        dominantTypeColor = dominantItem.itemType.color;
-      }
-    }
+    // Step 3: Build the result
+    return collections.map((collection) => {
+      const itemCount = collection._count.items;
+      const typeCounts = collectionTypeCountsMap.get(collection.id) || {};
+      const contentTypes =
+        collectionContentTypesMap.get(collection.id) || new Set();
 
-    return {
-      id: collection.id,
-      name: collection.name,
-      description: collection.description,
-      isFavorite: collection.isFavorite,
-      createdAt: collection.createdAt,
-      updatedAt: collection.updatedAt,
-      itemCount,
-      dominantTypeColor,
-      contentTypes: Array.from(contentTypeSet),
-    };
-  });
+      // Find dominant type (most frequent)
+      let dominantTypeColor = "#6b7280";
+      let maxCount = 0;
+
+      for (const [typeName, count] of Object.entries(typeCounts)) {
+        if (count > maxCount) {
+          maxCount = count;
+          // Find the color from any item with this type
+          const collectionItems = collectionItemsMap.get(collection.id) || [];
+          const itemWithType = collectionItems.find(
+            (i) => i.itemType?.name === typeName,
+          );
+          if (itemWithType?.itemType?.color) {
+            dominantTypeColor = itemWithType.itemType.color;
+          }
+        }
+      }
+
+      return {
+        id: collection.id,
+        name: collection.name,
+        description: collection.description,
+        isFavorite: collection.isFavorite,
+        createdAt: collection.createdAt,
+        updatedAt: collection.updatedAt,
+        itemCount,
+        dominantTypeColor,
+        contentTypes: Array.from(contentTypes),
+      };
+    });
+  } catch (error) {
+    console.error("Failed to fetch recent collections:", error);
+    throw error;
+  }
 }
 
 /**

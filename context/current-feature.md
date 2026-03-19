@@ -1,40 +1,36 @@
 # Current Feature
 
-## Add Pro Badge to Sidebar
+## Optimize N+1 Queries
 
 **Status: Not Started**
 
 ### Goals
 
-- Add a pro badge to the files and images types in the sidebar
-- Use ShadCN UI badge component
-- Make badge clean and subtle
-- Display "PRO" in all uppercase
+- Optimize `getRecentCollections()` to use database-level aggregation
+- Replace client-side item counting with Prisma's `_count` aggregation
+- For dominant type color, use database-level grouping to find most frequent item type
+- Maintain backward compatibility with existing dashboard UI
+- Add proper error handling
 
 ### Notes
 
-- Need to identify where item types are displayed in the sidebar
-- Apply badge to specific item types (files and images)
-- Badge should be visually subtle but noticeable
-- Consider badge placement next to item type name or icon
+The current implementation in `src/lib/db/collections.ts` loads all collection items and their item types into memory, then manually calculates item counts and dominant type colors. This creates an N+1 query pattern that can cause performance issues with larger datasets.
+
+**Quick Win:** Use Prisma's `_count` aggregation and groupBy to reduce database queries.
 
 ### References
 
-- ShadCN Badge component: `src/components/ui/badge.tsx` (may need to install if not present)
-- Sidebar component: `src/components/Sidebar.tsx`
-- Item types data structure: `src/lib/db/items.ts`
-- Project overview: `context/project-overview.md`
-- Coding standards: `context/coding-standards.md`
+- Current implementation: `src/lib/db/collections.ts:43-88`
+- Prisma 7 aggregation docs: https://www.prisma.io/docs/orm/aggregation-grouping-and-batching
 
 ### Tasks
 
-- [ ] Check if Badge component exists in ShadCN UI, install if needed
-- [ ] Analyze Sidebar.tsx to identify where item types are rendered
-- [ ] Determine which item types should show "PRO" badge (files and images)
-- [ ] Design badge styling (clean and subtle)
-- [ ] Implement badge display next to item type names
-- [ ] Test sidebar rendering with badge
-- [ ] Verify TypeScript compilation and no build errors
+- [ ] Analyze current N+1 pattern in `getRecentCollections()`
+- [ ] Design optimized query using Prisma groupBy or raw SQL
+- [ ] Implement optimized version with database-level aggregation
+- [ ] Test with seeded data to ensure results match
+- [ ] Verify TypeScript types are correct
+- [ ] Run build to ensure no errors
 
 **History**
 
@@ -58,3 +54,15 @@
   - Added "View all collections" link under Collections section
   - Build successful, no TypeScript errors
   - Feature implemented on branch `feature/stats-sidebar-integration`
+- **2026-03-19**: Add Pro Badge to Sidebar - Complete
+  - Created Badge component (`src/components/ui/badge.tsx`)
+  - Added PRO badge to "file" and "image" item types in sidebar navigation
+  - Badge uses subtle variant, clean and minimal styling
+  - Build successful, no TypeScript errors
+  - Feature implemented on branch `feature/add-pro-badge-sidebar`
+
+- **2026-03-19**: Optimize N+1 Queries - Next Feature
+  - Identified N+1 pattern in `getRecentCollections()` function
+  - Client-side aggregation loads all items into memory
+  - Need to move item counting and dominant type calculation to database
+  - Target file: `src/lib/db/collections.ts`

@@ -23,8 +23,6 @@ import {
   Image,
   Link as LinkIcon,
   Heart,
-  Clock,
-  PanelLeft,
   ChevronLeft,
   ChevronRight,
   ChevronDown,

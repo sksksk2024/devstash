@@ -42,7 +42,7 @@ Read the following to get the full context of the project:
     1. If argument is a filename, look in `context/features/{name}.md` or `context/fixes/{name}.md`.
     2. If multiple words, use as inline description and generate goals.
     3. Update `@context/current-feature.md`: Update H1, set Status to "Not Started", write goals and notes.
-    4. 🛑 **STOP CRITICAL**: After updating the file, DO NOT proceed to implementation. Show the summary to the user and wait for the `/feature start` command.
+    4. 🛑 STOP: Show the summary and wait for the /feature start command. Do not implement.
 
   - **start**:
     1. Verify Goals in `@context/current-feature.md`.
@@ -53,17 +53,19 @@ Read the following to get the full context of the project:
   - **review**:
     1. Compare implementation against goals in `current-feature.md`.
     2. Check for: ✅ Goals met, ❌ Missing, ⚠️ Code quality, 🚫 Scope creep.
+    3. 🛑 STOP: Give the final verdict and wait.
 
   - **explain**:
     1. Run `git diff master --name-only`.
     2. For each file, provide: Path, 1-2 sentence explanation, and key patterns used.
     3. Summarize the data/control flow between changes.
-    4. 🛑 **STOP**: Display the explanation and wait. DO NOT commit, DO NOT merge, and DO NOT run any 'complete' steps.
+    4. 🛑 STOP: Display the explanation. DO NOT commit or merge.
 
   - **test**:
     1. Identify new server actions/utilities.
     2. Write unit tests using **Vitest** (happy path & error cases).
     3. Run `npm test` and report coverage.
+    4. 🛑 STOP: Wait for user feedback.
 
   - **complete**:
     1. `git add .` and commit with a descriptive message.
@@ -71,3 +73,52 @@ Read the following to get the full context of the project:
     3. **Reset `current-feature.md`**: Change H1 to `# Current Feature`, clear Goals/Notes, append summary to History.
     4. Commit reset: `chore: reset current-feature.md after completing [feature]`.
     5. Push `master` to origin (single push).
+    6. If the feature branch exists on origin, delete it.
+
+- **/cleanup [run|check]**:
+  1. Review codebase for: History order in @context/current-feature.md, console.log in src/, unused imports, stale TODOs, orphaned files, context file sync, .env vs .env.production keys, and stale @ts-ignore.
+
+  2. If "check" or no arg: Only report findings and list what WOULD be cleaned up. Do not modify.
+
+  3. If "run" or "fix":
+  - Report all findings as a numbered list.
+
+  - Ask: "Which items would you like me to fix? (1,3,5 / all / none)".
+
+  - 🛑 STOP: Wait for response. Only fix specified items and report changes.
+
+## Custom Agents & Audits
+
+### Code-Scanner Subagent
+
+- **/audit [scope]**:
+  1. Task: Scan the Next.js codebase for specific technical debt and risks.
+
+  2. Security Scan: Check for vulnerabilities, sensitive data exposure, and insecure patterns.
+  - Critical: Remote Code Execution (RCE), SQL Injection, or exposed private keys.
+
+  - High: Broken Access Control (once Auth is added) or insecure API endpoints.
+
+  - Medium: Insecure headers or sensitive info in client-side logs.
+
+  - Low: Best practice deviations.
+  3. Performance & Quality: Check for N+1 query issues, heavy client-side components, and code that should be refactored into separate files.
+
+  4. Constraints:
+  - DO NOT report missing features (e.g., if No Auth exists, do not report it as a "missing security feature").
+
+  - Ignore .env file visibility (it is correctly in .gitignore).
+  5. Output: Group findings by severity (Critical, High, Medium, Low) with file paths, line numbers, and suggested fixes.
+
+  6. 🛑 STOP: Display the report and wait for the next command.
+
+- **/quick-wins**:
+  1. Task: Analyze the last /audit report and identify "Quick Wins" (low risk, high impact).
+
+  2. Prioritize: Focus on the N+1 issues and simple refactors.
+
+  3. Action: Automatically update @context/current-feature.md by adding these quick wins to the Goals section.
+
+  4. Constraint: Do not add authentication-related tasks.
+
+  5. 🛑 STOP: Confirm the goals have been added to current-feature.md.
