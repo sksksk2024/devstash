@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Badge } from "@/components/ui/badge";
 import {
   Sheet,
   SheetContent,
@@ -105,6 +106,7 @@ export default function Sidebar({
               const Icon = iconMap[type.icon] || File;
               const isActive = pathname === `/items/${type.name}`;
               const count = typeCountMap.get(type.name) || 0;
+              const isProType = type.name === "file" || type.name === "image";
 
               return (
                 <Link
@@ -122,7 +124,17 @@ export default function Sidebar({
                   <Icon className="h-4 w-4" color={type.color} />
                   {!isCollapsed && (
                     <>
-                      <span className="flex-1">{type.name}</span>
+                      <span className="flex-1 flex items-center gap-2">
+                        {type.name}
+                        {isProType && (
+                          <Badge
+                            variant="subtle"
+                            className="h-4 px-1 text-[10px] font-bold"
+                          >
+                            PRO
+                          </Badge>
+                        )}
+                      </span>
                       <span className="text-xs text-muted-foreground">
                         {count}
                       </span>

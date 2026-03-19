@@ -26,3 +26,48 @@ Read the following to get the full context of the project:
 - **Build**: `npm run build`
 - **Production server**: `npm run start`
 - **Lint**: `npm run lint`
+
+## Custom Commands (Skills)
+
+- **/list-components [subdirectory]**:
+  1. Use the `list_files` tool to find all React component files (`.tsx`, `.ts`, `.jsx`, `.js`) in the `components/` folder.
+  2. If a `[subdirectory]` is specified, only search within `components/[subdirectory]`.
+  3. Output a numbered list with relative paths.
+  4. Infer a one-line description from each filename.
+  5. Provide a summary count at the end.
+  6. If no files are found, simply state "No components found."
+
+- **/feature [action] [arguments]**:
+  - **load**:
+    1. If argument is a filename, look in `context/features/{name}.md` or `context/fixes/{name}.md`.
+    2. If multiple words, use as inline description and generate goals.
+    3. Update `@context/current-feature.md`: Update H1, set Status to "Not Started", write goals and notes.
+    4. 🛑 **STOP CRITICAL**: After updating the file, DO NOT proceed to implementation. Show the summary to the user and wait for the `/feature start` command.
+
+  - **start**:
+    1. Verify Goals in `@context/current-feature.md`.
+    2. Set Status to "In Progress".
+    3. Create and checkout a new git branch (name derived from H1).
+    4. Implement goals one by one.
+
+  - **review**:
+    1. Compare implementation against goals in `current-feature.md`.
+    2. Check for: ✅ Goals met, ❌ Missing, ⚠️ Code quality, 🚫 Scope creep.
+
+  - **explain**:
+    1. Run `git diff master --name-only`.
+    2. For each file, provide: Path, 1-2 sentence explanation, and key patterns used.
+    3. Summarize the data/control flow between changes.
+    4. 🛑 **STOP**: Display the explanation and wait. DO NOT commit, DO NOT merge, and DO NOT run any 'complete' steps.
+
+  - **test**:
+    1. Identify new server actions/utilities.
+    2. Write unit tests using **Vitest** (happy path & error cases).
+    3. Run `npm test` and report coverage.
+
+  - **complete**:
+    1. `git add .` and commit with a descriptive message.
+    2. Merge feature branch into `master`, then delete local branch.
+    3. **Reset `current-feature.md`**: Change H1 to `# Current Feature`, clear Goals/Notes, append summary to History.
+    4. Commit reset: `chore: reset current-feature.md after completing [feature]`.
+    5. Push `master` to origin (single push).

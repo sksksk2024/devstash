@@ -1,50 +1,40 @@
 # Current Feature
 
-## Stats & Sidebar Integration
+## Add Pro Badge to Sidebar
 
-**Status: Complete**
+**Status: Not Started**
 
 ### Goals
 
-- Display stats in main area from database data (not mock data)
-- Display system item types in sidebar with icons, linking to /items/[typename]
-- Add "View all collections" link under the collections list that goes to /collections
-- Show star icons for favorite collections
-- For recent collections, show a colored circle based on the most-used item type (instead of Clock icon)
-- Ensure all collection data displayed in sidebar comes from database
+- Add a pro badge to the files and images types in the sidebar
+- Use ShadCN UI badge component
+- Make badge clean and subtle
+- Display "PRO" in all uppercase
 
 ### Notes
 
-- Stats are already using real data from database
-- Item types are already displayed with icons and links
-- `src/lib/db/items.ts` already exists with required functions
-- `getRecentCollections()` already returns `dominantTypeColor` for each collection
-- Collection card border colors in main area already use `dominantTypeColor`
-- Need to update Sidebar component to:
-  - Accept `dominantTypeColor` in Collection interface
-  - Add "View all collections" link after Recent collections
-  - Replace Clock icon with colored circle for recent collections
+- Need to identify where item types are displayed in the sidebar
+- Apply badge to specific item types (files and images)
+- Badge should be visually subtle but noticeable
+- Consider badge placement next to item type name or icon
 
 ### References
 
-- Stats & Sidebar spec: `context/features/stats-sidebar-spec.md`
+- ShadCN Badge component: `src/components/ui/badge.tsx` (may need to install if not present)
+- Sidebar component: `src/components/Sidebar.tsx`
+- Item types data structure: `src/lib/db/items.ts`
 - Project overview: `context/project-overview.md`
 - Coding standards: `context/coding-standards.md`
-- Prisma client: `src/lib/prisma.ts`
-- Dashboard page: `src/app/dashboard/page.tsx`
-- Collections DB functions: `src/lib/db/collections.ts`
-- Items DB functions: `src/lib/db/items.ts`
-- Sidebar component: `src/components/Sidebar.tsx`
 
 ### Tasks
 
-- [x] Analyze spec requirements and current state
-- [x] Review Sidebar.tsx and collections data structure
-- [x] Update Sidebar Collection interface to include `dominantTypeColor?: string`
-- [x] Add "View all collections" link under Collections section (after recent collections)
-- [x] Change recent collections display: replace Clock icon with colored circle using `dominantTypeColor`
-- [x] Test sidebar rendering with real database data
-- [x] Verify TypeScript compilation and no build errors
+- [ ] Check if Badge component exists in ShadCN UI, install if needed
+- [ ] Analyze Sidebar.tsx to identify where item types are rendered
+- [ ] Determine which item types should show "PRO" badge (files and images)
+- [ ] Design badge styling (clean and subtle)
+- [ ] Implement badge display next to item type names
+- [ ] Test sidebar rendering with badge
+- [ ] Verify TypeScript compilation and no build errors
 
 **History**
 
