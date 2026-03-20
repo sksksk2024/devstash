@@ -87,6 +87,25 @@ Read the following to get the full context of the project:
 
   - 🛑 STOP: Wait for response. Only fix specified items and report changes.
 
+## Environment & Branch Safety (NEON MCP)
+
+- Default Context: Whenever using the neon MCP tools, always default to the following:
+  - Project: devstash
+
+  - Branch: development (if it doesn't exist, use master but warn me first).
+
+- Production Safety:
+  - NEVER perform write operations (create, update, delete, drop) on the main or production branch unless I explicitly state: "Target production branch".
+
+  - If a command doesn't specify a branch, assume development.
+
+- Pre-Check: Before running any Neon mutation, verify the current active branch using neon.list_branches
+
+## Deep Search (Context7 MCP)
+
+- **Indexing**: Before a major `/audit` or `/feature load`, ensure Context7 has indexed the current directory.
+- **Dependency Mapping**: Use Context7 to find all files affected by a logic change in `src/lib` before running `/feature review`.
+
 ## Custom Agents & Audits
 
 ### Code-Scanner Subagent
