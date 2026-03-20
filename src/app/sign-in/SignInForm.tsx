@@ -15,6 +15,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { toast } from "sonner";
+import { Mail } from "lucide-react";
 
 export default function SignInForm() {
   const router = useRouter();
@@ -36,9 +37,14 @@ export default function SignInForm() {
       });
 
       if (result?.error) {
-        setError(result.error);
+        let errorMessage = result.error;
+        if (result.error === "EMAIL_NOT_VERIFIED") {
+          errorMessage =
+            "Please verify your email address before signing in. Check your email for the verification link.";
+        }
+        setError(errorMessage);
         toast.error("Sign in failed", {
-          description: result.error,
+          description: errorMessage,
         });
       } else if (result?.ok) {
         toast.success("Signed in successfully!");
@@ -72,7 +78,24 @@ export default function SignInForm() {
         <CardContent className="space-y-4">
           {error && (
             <div className="p-3 text-sm text-destructive bg-destructive/10 rounded-md border border-destructive/20">
-              {error}
+              {error === "EMAIL_NOT_VERIFIED" ? (
+                <div className="flex items-start space-x-2">
+                  <Mail className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <p className="font-medium">Email not verified</p>
+                    <p className="mt-1">
+                      Please verify your email address before signing in. Check
+                      your email for the verification link.
+                    </p>
+                    <p className="mt-2 text-xs">
+                      Didn't receive the email? Check your spam folder or
+                      contact support.
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                error
+              )}
             </div>
           )}
 
@@ -112,6 +135,10 @@ export default function SignInForm() {
             {isLoading ? "Signing in..." : "Sign In"}
           </Button>
 
+          <Button asChild variant="default" className="w-full">
+            <Link href="/register">Create an account</Link>
+          </Button>
+
           <div className="relative w-full">
             <div className="absolute inset-0 flex items-center">
               <span className="w-full border-t" />
@@ -142,15 +169,6 @@ export default function SignInForm() {
           </Button>
         </CardFooter>
       </form>
-
-      <div className="px-6 pb-6 text-center">
-        <p className="text-sm text-muted-foreground">
-          Don't have an account?{" "}
-          <Link href="/register" className="text-primary hover:underline">
-            Sign up
-          </Link>
-        </p>
-      </div>
     </Card>
   );
 }

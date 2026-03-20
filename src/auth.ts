@@ -7,6 +7,9 @@ import Credentials from "@auth/core/providers/credentials";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,
+  pages: {
+    signIn: "/sign-in",
+  },
   providers: [
     ...authConfig.providers.filter((p) => p.name !== "credentials"),
     Credentials({
@@ -32,6 +35,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           throw new Error(
             "This user signed up via OAuth and cannot use password sign-in",
           );
+        }
+
+        // Check if email is verified
+        if (!existingUser.emailVerified) {
+          throw new Error("EMAIL_NOT_VERIFIED");
         }
 
         const isValid = await bcrypt.compare(
