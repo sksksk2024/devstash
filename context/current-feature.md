@@ -1,14 +1,33 @@
 # Current Feature
 
-## [Auth UI - Sign In, Register & Sign Out]
+## [Forgot Password Functionality]
 
-**Status: Not Started**
+**Status: In Progress**
 
 ### Goals
 
+- [ ] Add "Forgot Password?" link to SignInForm
+- [ ] Create `/forgot-password` page with email input form
+- [ ] Create `/api/auth/forgot-password` endpoint to generate and email reset token
+- [ ] Create `/reset-password` page with password reset form (validates token from query)
+- [ ] Create `/api/auth/reset-password` endpoint to update password
+- [ ] Create success and error pages for password reset flow
+- [ ] Test complete forgot password flow end-to-end
+
 ### Notes
 
+- Reuse existing `VerificationToken` model for password reset tokens
+- Use same email infrastructure (Resend) as email verification
+- Tokens should expire in 24 hours
+- Should respect `ENABLE_EMAIL_VERIFICATION` flag (but this is separate, should always work for password reset)
+- Password reset should validate that token exists and hasn't expired
+- After successful reset, user should be able to sign in with new password
+
 ### References
+
+- Prisma schema: `VerificationToken` model with `identifier` (email) and `token` fields
+- Email verification flow: `/api/auth/verify-email/route.ts` as reference for token validation
+- Registration flow: `/api/auth/register/route.ts` as reference for email sending
 
 ### Tasks
 
@@ -38,3 +57,4 @@
   - Updated credentials provider to skip verification check when disabled
   - Updated RegisterForm to show conditional messages
   - Merged into master
+- **2026-03-20**: Started Forgot Password Functionality - In Progress
