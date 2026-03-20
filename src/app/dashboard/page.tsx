@@ -112,7 +112,7 @@ export default async function DashboardPage() {
                 Welcome back, {currentUser.name.split(" ")[0]}!
               </h2>
               <p className="text-muted-foreground">
-                Here's what's happening with your collections today.
+                Here&apos;s what&apos;s happening with your collections today.
               </p>
             </div>
 

@@ -3,6 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useSession, signOut } from "next-auth/react";
+import type { Session } from "next-auth";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
@@ -14,6 +16,14 @@ import {
   SheetTrigger,
   SheetTitle,
 } from "@/components/ui/sheet";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Code,
   Sparkles,
@@ -27,13 +37,15 @@ import {
   ChevronRight,
   ChevronDown,
   Menu,
-  Settings,
   FolderOpen,
   X,
+  LogOut,
+  User,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { itemTypes } from "@/lib/mock-data";
 import { ItemTypeStats } from "@/lib/db/collections";
+import { toast } from "sonner";
 
 interface Collection {
   id: string;
@@ -49,46 +61,44 @@ interface SidebarProps {
   itemTypeStats?: ItemTypeStats[];
 }
 
-const iconMap: Record<
-  string,
-  React.ComponentType<{ className?: string; color?: string }>
-> = {
-  Code,
-  Sparkles,
-  Terminal,
-  StickyNote,
-  File,
-  Image,
-  Link: LinkIcon,
-};
+interface SidebarContentProps {
+  isCollapsed: boolean;
+  pathname: string;
+  collections: Collection[];
+  itemTypeStats: ItemTypeStats[];
+  favoriteCollections: Collection[];
+  showAllFavorites: boolean;
+  setShowAllFavorites: (value: boolean) => void;
+  showAllRecent: boolean;
+  setShowAllRecent: (value: boolean) => void;
+  isCollectionsExpanded: boolean;
+  setIsCollectionsExpanded: (value: boolean) => void;
+  sessionUser: Session["user"] | undefined;
+}
 
-export default function Sidebar({
-  collections = [],
-  itemTypeStats = [],
-}: SidebarProps) {
-  const [isCollapsed, setIsCollapsed] = useState(false);
-  const [showAllFavorites, setShowAllFavorites] = useState(false);
-  const [showAllRecent, setShowAllRecent] = useState(false);
-  const [isCollectionsExpanded, setIsCollectionsExpanded] = useState(true);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const pathname = usePathname();
-
-  const favoriteCollections = collections.filter((c) => c.isFavorite);
-  // Deterministic sorting to avoid hydration mismatch (sort by itemCount descending)
+function SidebarContent({
+  isCollapsed,
+  pathname,
+  collections,
+  itemTypeStats,
+  favoriteCollections,
+  showAllFavorites,
+  setShowAllFavorites,
+  showAllRecent,
+  setShowAllRecent,
+  isCollectionsExpanded,
+  setIsCollectionsExpanded,
+  sessionUser,
+}: SidebarContentProps) {
   const recentCollections = [...collections]
     .sort((a, b) => b.itemCount - a.itemCount)
     .slice(0, 3);
 
-  // Create a map of item type counts for quick lookup
   const typeCountMap = new Map(
     itemTypeStats.map((stat) => [stat.name, stat.count]),
   );
 
-  const toggleSidebar = () => {
-    setIsCollapsed(!isCollapsed);
-  };
-
-  const SidebarContent = () => (
+  return (
     <>
       <ScrollArea className="flex-1 px-2 py-2">
         {/* Item Types Navigation */}
@@ -295,7 +305,7 @@ export default function Sidebar({
       {/* Separator before User Area */}
       <Separator />
 
-      {/* User Avatar Area - Bottom with Settings */}
+      {/* User Avatar Area */}
       <div
         className={cn(
           "border-t p-2",
@@ -304,25 +314,114 @@ export default function Sidebar({
             : "flex items-center gap-2",
         )}
       >
-        <Avatar className="h-8 w-8">
-          <AvatarImage src="/placeholder-avatar.jpg" alt="User" />
-          <AvatarFallback>DU</AvatarFallback>
-        </Avatar>
-        {!isCollapsed && (
-          <>
-            <div className="flex-1 overflow-hidden min-w-0">
-              <p className="truncate text-sm font-medium">Demo User</p>
-              <p className="truncate text-xs text-muted-foreground">
-                demo@devstash.io
-              </p>
-            </div>
-          </>
+        {sessionUser ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                className={cn(
+                  "flex items-center gap-2",
+                  isCollapsed && "w-10 h-10 p-0 justify-center",
+                )}
+              >
+                <Avatar className="h-8 w-8">
+                  <AvatarImage
+                    src={sessionUser.image || undefined}
+                    alt={sessionUser.name || "User"}
+                  />
+                  <AvatarFallback>
+                    {sessionUser.name
+                      ? sessionUser.name
+                          .split(" ")
+                          .map((n: string) => n[0])
+                          .slice(0, 2)
+                          .join("")
+                          .toUpperCase()
+                      : "U"}
+                  </AvatarFallback>
+                </Avatar>
+                {!isCollapsed && (
+                  <div className="flex-1 overflow-hidden min-w-0 text-left">
+                    <p className="truncate text-sm font-medium">
+                      {sessionUser.name || "User"}
+                    </p>
+                    <p className="truncate text-xs text-muted-foreground">
+                      {sessionUser.email || ""}
+                    </p>
+                  </div>
+                )}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuLabel>
+                <div className="flex flex-col space-y-1">
+                  <p className="text-sm font-medium">
+                    {sessionUser.name || "User"}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {sessionUser.email}
+                  </p>
+                </div>
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <Link
+                  href="/profile"
+                  className="flex items-center cursor-pointer"
+                >
+                  <User className="mr-2 h-4 w-4" />
+                  <span>Profile</span>
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className="cursor-pointer text-destructive focus:text-destructive"
+                onClick={() => {
+                  toast.success("Signed out successfully!");
+                  signOut({ callbackUrl: "/" });
+                }}
+              >
+                <LogOut className="mr-2 h-4 w-4" />
+                <span>Sign out</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : (
+          <Button variant="ghost" size="sm" asChild>
+            <Link href="/sign-in">Sign in</Link>
+          </Button>
         )}
-        <Button variant="ghost" size="icon" className="h-7 w-7 shrink-0">
-          <Settings className="h-4 w-4" />
-        </Button>
       </div>
     </>
+  );
+}
+
+const iconMap: Record<
+  string,
+  React.ComponentType<{ className?: string; color?: string }>
+> = {
+  Code,
+  Sparkles,
+  Terminal,
+  StickyNote,
+  File,
+  Image,
+  Link: LinkIcon,
+};
+
+export default function Sidebar({
+  collections = [],
+  itemTypeStats = [],
+}: SidebarProps) {
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [showAllFavorites, setShowAllFavorites] = useState(false);
+  const [showAllRecent, setShowAllRecent] = useState(false);
+  const [isCollectionsExpanded, setIsCollectionsExpanded] = useState(true);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
+  const { data: session } = useSession();
+
+  const favoriteCollections = collections.filter(
+    (c: Collection) => c.isFavorite,
   );
 
   return (
@@ -338,7 +437,7 @@ export default function Sidebar({
         <Button
           variant="ghost"
           size="icon"
-          onClick={toggleSidebar}
+          onClick={() => setIsCollapsed(!isCollapsed)}
           className="absolute -right-3 top-6 h-6 w-6 rounded-full border bg-background z-10"
         >
           {isCollapsed ? (
@@ -348,7 +447,20 @@ export default function Sidebar({
           )}
         </Button>
 
-        <SidebarContent />
+        <SidebarContent
+          isCollapsed={isCollapsed}
+          pathname={pathname}
+          collections={collections}
+          itemTypeStats={itemTypeStats}
+          favoriteCollections={favoriteCollections}
+          showAllFavorites={showAllFavorites}
+          setShowAllFavorites={setShowAllFavorites}
+          showAllRecent={showAllRecent}
+          setShowAllRecent={setShowAllRecent}
+          isCollectionsExpanded={isCollectionsExpanded}
+          setIsCollectionsExpanded={setIsCollectionsExpanded}
+          sessionUser={session?.user}
+        />
       </aside>
 
       {/* Mobile Drawer - Always Visible on Mobile */}
@@ -383,7 +495,20 @@ export default function Sidebar({
             </Button>
           </div>
           <div className="flex-1 overflow-hidden">
-            <SidebarContent />
+            <SidebarContent
+              isCollapsed={isCollapsed}
+              pathname={pathname}
+              collections={collections}
+              itemTypeStats={itemTypeStats}
+              favoriteCollections={favoriteCollections}
+              showAllFavorites={showAllFavorites}
+              setShowAllFavorites={setShowAllFavorites}
+              showAllRecent={showAllRecent}
+              setShowAllRecent={setShowAllRecent}
+              isCollectionsExpanded={isCollectionsExpanded}
+              setIsCollectionsExpanded={setIsCollectionsExpanded}
+              sessionUser={session?.user}
+            />
           </div>
         </SheetContent>
       </Sheet>

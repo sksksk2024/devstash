@@ -1,16 +1,44 @@
 # Current Feature
 
-## [Feature Name]
+## [Auth UI - Sign In, Register & Sign Out]
 
 **Status: Not Started**
 
 ### Goals
 
+- Create custom Sign In page (`/sign-in`) with email/password form and GitHub OAuth button
+- Create custom Register page (`/register`) with name, email, password, confirm password fields and validation
+- Update Sidebar user area to display real session data (avatar, name, email)
+- Implement avatar dropdown with sign out option
+- Add sign out functionality
+- Test all authentication flows
+
 ### Notes
+
+#### Avatar Logic
+
+- If user has `image` (from GitHub): use that
+- Otherwise: generate initials from name (e.g., "Brad Traversy" → "BT")
+
+#### Initials Component
+
+Create a reusable avatar component that handles both cases using existing shadcn/ui Avatar component.
 
 ### References
 
+- `context/features/auth-phase-3-spec.md`
+- `src/auth.ts` (NextAuth configuration)
+- `src/app/api/auth/register/route.ts` (registration endpoint)
+- `src/components/Sidebar.tsx` (sidebar user area)
+
 ### Tasks
+
+1. Create `/sign-in` page with form validation and error display
+2. Create `/register` page with client-side validation (passwords match, email format)
+3. Update Sidebar to use `useSession()` hook for real user data
+4. Add dropdown menu for avatar with sign out option
+5. Implement sign out using NextAuth `signOut()` function
+6. Test all flows end-to-end
 
 **History**
 
