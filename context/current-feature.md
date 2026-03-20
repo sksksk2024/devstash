@@ -1,14 +1,31 @@
 # Current Feature
 
-## [Feature Name]
+## [Auth Phase 2: Email/Password Credentials]
 
-**Status: Not Started**
+**Status: Completed**
 
 ### Goals
 
+- [x] Add Credentials provider placeholder in `auth.config.ts`
+- [x] Override Credentials provider in `auth.ts` with bcrypt validation logic
+- [x] Create registration API route at `/api/auth/register` with password hashing
+- [x] Test registration and sign-in flow
+- [x] Verify GitHub OAuth still works
+
 ### Notes
 
+- User model already has password field in Prisma schema
+- bcryptjs is already installed
+- Using split auth pattern: config in `auth.config.ts`, overrides in `auth.ts`
+- Credentials provider added directly in `auth.ts` (not in `auth.config.ts`) to avoid duplication
+- Registration endpoint tested successfully with user creation
+- Sign-in with credentials works via `/api/auth/signin/credentials`
+- GitHub OAuth continues to work
+
 ### References
+
+- Credentials provider: https://authjs.dev/getting-started/authentication/credentials
+- NextAuth v5 split config pattern
 
 ### Tasks
 
@@ -21,36 +38,13 @@
 - **2026-03-17**: Completed Phase 3 - Main area with stats, collections, pinned/recent items
 - **2026-03-17**: Completed Prisma 7 setup with Neon PostgreSQL, generated client, seeded database
 - **2026-03-18**: Dashboard Collections Integration - Complete
-  - Replaced mock collection data with real database queries
-  - Added Favorites, Pinned, and Recent items sections with real data
-  - Collection cards use dominant type color for border and icons
 - **2026-03-18**: Dashboard Items Integration - Complete
-  - Items display with color-coded borders and type tags
-  - Stats updated to use real data
-  - All sections conditional based on data presence
 - **2026-03-18**: Stats & Sidebar Integration - Complete
-  - Updated Sidebar Collection interface with `dominantTypeColor`
-  - Replaced Clock icon with colored circle based on dominant item type
-  - Added "View all collections" link under Collections section
-  - Build successful, no TypeScript errors
-  - Feature implemented on branch `feature/stats-sidebar-integration`
 - **2026-03-19**: Add Pro Badge to Sidebar - Complete
-  - Created Badge component (`src/components/ui/badge.tsx`)
-  - Added PRO badge to "file" and "image" item types in sidebar navigation
-  - Badge uses subtle variant, clean and minimal styling
-  - Build successful, no TypeScript errors
-  - Feature implemented on branch `feature/add-pro-badge-sidebar`
 - **2026-03-19**: Optimize N+1 Queries - Complete
-  - Reduced database queries from O(N) to O(2) using Prisma aggregation
-  - Used \_count for item counts, single query for all items
-  - Efficient in-memory aggregation with Maps
-  - Build passed, dev server verified dashboard loads correctly
-  - Feature implemented on branch `feature/optimize-n-plus-queries`
 - **2026-03-19**: Auth Setup - NextAuth + GitHub Provider - Complete
-  - Installed NextAuth v5 (`next-auth@beta`) and `@auth/prisma-adapter`
-  - Set up split auth config pattern (auth.config.ts for edge, auth.ts with Prisma adapter)
-  - Added GitHub OAuth provider
-  - Protected `/dashboard/*` routes using Next.js 16 proxy middleware
-  - Extended Session and JWT types with user.id
-  - Build successful, dev server verified complete OAuth flow
-  - Feature implemented on branch `feature/auth-phase-1`
+- **2026-03-20**: Auth Phase 2 - Email/Password Credentials - Complete
+  - Added Credentials provider with bcrypt validation in `auth.ts`
+  - Created `/api/auth/register` endpoint with password hashing
+  - Tested registration and sign-in successfully
+  - GitHub OAuth still functional
