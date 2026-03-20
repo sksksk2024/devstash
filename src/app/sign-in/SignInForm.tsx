@@ -88,7 +88,7 @@ export default function SignInForm() {
                       your email for the verification link.
                     </p>
                     <p className="mt-2 text-xs">
-                      Didn't receive the email? Check your spam folder or
+                      Didn&apos;t receive the email? Check your spam folder or
                       contact support.
                     </p>
                   </div>
@@ -127,6 +127,14 @@ export default function SignInForm() {
               required
               disabled={isLoading}
             />
+            <div className="text-right">
+              <Link
+                href="/forgot-password"
+                className="text-sm text-primary hover:underline"
+              >
+                Forgot password?
+              </Link>
+            </div>
           </div>
         </CardContent>
 

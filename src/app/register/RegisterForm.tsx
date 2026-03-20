@@ -108,7 +108,7 @@ export default function RegisterForm() {
               <>Your account has been created successfully.</>
             ) : (
               <>
-                We've sent a verification link to <strong>{email}</strong>
+                We&apos;ve sent a verification link to <strong>{email}</strong>
               </>
             )}
           </CardDescription>
@@ -124,7 +124,7 @@ export default function RegisterForm() {
                 The verification link will expire in 24 hours.
               </p>
               <div className="pt-4 border-t">
-                <p className="mb-2">Didn't receive the email?</p>
+                <p className="mb-2">Didn&apos;t receive the email?</p>
                 <p className="text-xs text-muted-foreground">
                   Check your spam folder or make sure you entered the correct
                   email address.
