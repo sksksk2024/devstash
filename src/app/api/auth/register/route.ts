@@ -6,6 +6,10 @@ import { randomBytes } from "crypto";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+// Determine if email verification is enabled
+const isEmailVerificationEnabled =
+  process.env.ENABLE_EMAIL_VERIFICATION !== "false";
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -42,15 +46,31 @@ export async function POST(request: NextRequest) {
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create user with emailVerified = null (not verified)
+    // Create user with emailVerified based on flag
     const user = await prisma.user.create({
       data: {
         name,
         email,
         password: hashedPassword,
-        emailVerified: null,
+        emailVerified: isEmailVerificationEnabled ? null : new Date(),
       },
     });
+
+    // If email verification is disabled, return success immediately
+    if (!isEmailVerificationEnabled) {
+      return NextResponse.json(
+        {
+          message: "User created successfully. You can now sign in.",
+          user: {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            emailVerified: user.emailVerified,
+          },
+        },
+        { status: 201 },
+      );
+    }
 
     // Generate verification token
     const token = randomBytes(32).toString("hex");

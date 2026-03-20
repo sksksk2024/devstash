@@ -91,6 +91,9 @@ export default function RegisterForm() {
   };
 
   if (isRegistered) {
+    const isVerificationDisabled =
+      process.env.NEXT_PUBLIC_ENABLE_EMAIL_VERIFICATION === "false";
+
     return (
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1 text-center">
@@ -98,27 +101,40 @@ export default function RegisterForm() {
             <Mail className="h-8 w-8 text-green-600" />
           </div>
           <CardTitle className="text-2xl font-bold text-center">
-            Check Your Email
+            {isVerificationDisabled ? "Account Created!" : "Check Your Email"}
           </CardTitle>
           <CardDescription className="text-center">
-            We've sent a verification link to <strong>{email}</strong>
+            {isVerificationDisabled ? (
+              <>Your account has been created successfully.</>
+            ) : (
+              <>
+                We've sent a verification link to <strong>{email}</strong>
+              </>
+            )}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4 text-center text-sm text-muted-foreground">
-          <div className="flex items-center justify-center space-x-2">
-            <CheckCircle className="h-4 w-4 text-green-600" />
-            <p>Click the link in the email to verify your account.</p>
-          </div>
-          <p className="text-xs">
-            The verification link will expire in 24 hours.
-          </p>
-          <div className="pt-4 border-t">
-            <p className="mb-2">Didn't receive the email?</p>
-            <p className="text-xs text-muted-foreground">
-              Check your spam folder or make sure you entered the correct email
-              address.
-            </p>
-          </div>
+          {!isVerificationDisabled && (
+            <>
+              <div className="flex items-center justify-center space-x-2">
+                <CheckCircle className="h-4 w-4 text-green-600" />
+                <p>Click the link in the email to verify your account.</p>
+              </div>
+              <p className="text-xs">
+                The verification link will expire in 24 hours.
+              </p>
+              <div className="pt-4 border-t">
+                <p className="mb-2">Didn't receive the email?</p>
+                <p className="text-xs text-muted-foreground">
+                  Check your spam folder or make sure you entered the correct
+                  email address.
+                </p>
+              </div>
+            </>
+          )}
+          {isVerificationDisabled && (
+            <p>You can now sign in with your credentials.</p>
+          )}
         </CardContent>
         <CardFooter className="flex flex-col space-y-2">
           <Button asChild variant="outline" className="w-full">

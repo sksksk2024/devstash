@@ -5,6 +5,10 @@ import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import Credentials from "@auth/core/providers/credentials";
 
+// Determine if email verification is enabled
+const isEmailVerificationEnabled =
+  process.env.ENABLE_EMAIL_VERIFICATION !== "false";
+
 export const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,
   pages: {
@@ -37,8 +41,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           );
         }
 
-        // Check if email is verified
-        if (!existingUser.emailVerified) {
+        // Check if email is verified (only if verification is enabled)
+        if (isEmailVerificationEnabled && !existingUser.emailVerified) {
           throw new Error("EMAIL_NOT_VERIFIED");
         }
 
