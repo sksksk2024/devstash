@@ -1,14 +1,33 @@
 # Current Feature
 
-## [Current Feature]
+## Profile Page
 
-**Status: Not Started**
+**Status: Complete**
 
 ### Goals
 
+- [x] Create database function to fetch user stats (total items, collections, item type breakdown)
+- [x] Create profile page at `/profile` route with user info display (email, name, avatar, creation date)
+- [x] Implement usage stats section showing totals and item type breakdown
+- [x] Add change password functionality (only for email/password users)
+- [x] Add delete account with confirmation dialog
+- [x] Protect route with authentication
+- [x] Test the complete implementation
+
 ### Notes
 
+- Avatar: Use GitHub OAuth image if available, otherwise initials from name/email
+- Change password button only visible for credentials users (check `user.password` field)
+- Delete account requires confirmation dialog to prevent accidents
+- Item type breakdown: snippets, prompts, notes, commands, links, files, images
+- Follow existing patterns: server components for data fetching, client components for interactivity
+
 ### References
+
+- `prisma/schema.prisma` - User, Item, Collection, ItemType models
+- `src/auth.ts` - NextAuth configuration with credentials provider
+- `src/app/dashboard/page.tsx` - Example of data fetching and stats display
+- `src/components/Sidebar.tsx` - Example of avatar and user display
 
 ### Tasks
 
@@ -47,3 +66,15 @@
   - Built success/error states into the reset password flow
   - Fixed lint errors and verified build passes
   - Feature merged into master
+- **2026-03-21**: Profile Page - Complete
+  - Created `/profile` route with protected access (redirects unauthenticated users)
+  - Implemented profile information card showing: name, email, avatar (GitHub or initials), account creation date, authentication method
+  - Added usage statistics with total items, collections, and item type count
+  - Implemented item type breakdown grid with icons and colors
+  - Added change password functionality (only visible for email/password users)
+  - Created `/api/auth/change-password` endpoint with current password verification
+  - Added delete account with confirmation dialog
+  - Created `/api/auth/delete-account` endpoint with cascade deletion
+  - Added session callback in `auth.ts` to include user id in session
+  - Created `alert-dialog` UI component
+  - All lint warnings fixed, build successful

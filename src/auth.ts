@@ -14,6 +14,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   pages: {
     signIn: "/sign-in",
   },
+  callbacks: {
+    session: async ({ session, user }) => {
+      if (session.user && user) {
+        session.user.id = user.id;
+      }
+      return session;
+    },
+  },
   providers: [
     ...authConfig.providers.filter((p) => p.name !== "credentials"),
     Credentials({
