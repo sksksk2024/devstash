@@ -3,14 +3,14 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Heart, Pin } from "lucide-react";
-import Link from "next/link";
 import type { ItemWithDetails } from "@/lib/db/items";
 
 interface ItemCardProps {
   item: ItemWithDetails;
+  onClick?: (id: string) => void;
 }
 
-export default function ItemCard({ item }: ItemCardProps) {
+export default function ItemCard({ item, onClick }: ItemCardProps) {
   return (
     <Card
       className="hover:shadow-md transition-shadow border-l-4 h-full"
@@ -58,10 +58,10 @@ export default function ItemCard({ item }: ItemCardProps) {
         <Button
           variant="ghost"
           size="sm"
-          asChild
+          onClick={() => onClick?.(item.id)}
           className="mt-3 w-full justify-start"
         >
-          <Link href={`/items/${item.id}`}>Open</Link>
+          Open
         </Button>
       </CardContent>
     </Card>

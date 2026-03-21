@@ -226,3 +226,36 @@ export async function getItemsByType(
 
   return items as ItemWithDetails[];
 }
+
+/**
+ * Get a single item by ID with full details
+ */
+export async function getItemById(id: string): Promise<ItemWithDetails | null> {
+  const userId = await getUserId();
+
+  if (!userId) {
+    return null;
+  }
+
+  const item = await prisma.item.findFirst({
+    where: {
+      id,
+      userId,
+    },
+    include: {
+      itemType: true,
+      collections: {
+        include: {
+          collection: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  return item as ItemWithDetails | null;
+}

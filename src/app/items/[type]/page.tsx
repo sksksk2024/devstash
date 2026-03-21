@@ -1,13 +1,8 @@
 import { notFound } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import Sidebar from "@/components/Sidebar";
-import ItemCard from "@/components/ItemCard";
 import { getItemsByType, type ItemWithDetails } from "@/lib/db/items";
 import { getRecentCollections, getItemTypeStats } from "@/lib/db/collections";
-import Link from "next/link";
-import { Archive, FolderOpen } from "lucide-react";
+import Sidebar from "@/components/Sidebar";
+import ItemsByTypeClient from "@/components/ItemsByTypeClient";
 
 interface PageProps {
   params: Promise<{
@@ -46,8 +41,6 @@ export default async function ItemsByTypePage({ params }: PageProps) {
     notFound();
   }
 
-  const formattedType = type.charAt(0).toUpperCase() + type.slice(1);
-
   return (
     <div className="min-h-screen bg-background">
       {/* Top Bar */}
@@ -55,16 +48,12 @@ export default async function ItemsByTypePage({ params }: PageProps) {
         <div className="container mx-auto px-4 py-3 flex items-center justify-between">
           <h1 className="text-xl font-bold">DevStash</h1>
           <div className="flex items-center gap-4">
-            <Button variant="outline" asChild>
-              <Link href="/dashboard">
-                <Archive className="h-4 w-4 mr-2" />
-                Dashboard
-              </Link>
-            </Button>
-            <Button>
-              <FolderOpen className="h-4 w-4 mr-2" />
+            <button className="px-4 py-2 border rounded-md text-sm font-medium">
+              Archive
+            </button>
+            <button className="px-4 py-2 bg-primary text-primary-foreground rounded-md text-sm font-medium">
               New Collection
-            </Button>
+            </button>
           </div>
         </div>
       </header>
@@ -75,46 +64,10 @@ export default async function ItemsByTypePage({ params }: PageProps) {
 
         {/* Main Content */}
         <main className="flex-1 p-6 overflow-y-auto">
-          <div className="max-w-6xl mx-auto space-y-6">
-            {/* Page Header */}
-            <div>
-              <h2 className="text-2xl font-bold tracking-tight">
-                {formattedType}
-              </h2>
-              <p className="text-muted-foreground">
-                {items.length} {items.length === 1 ? "item" : "items"}
-              </p>
-            </div>
-
-            <Separator />
-
-            {/* Items Grid */}
-            {items.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {items.map((item: ItemWithDetails) => (
-                  <ItemCard key={item.id} item={item} />
-                ))}
-              </div>
-            ) : (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-center text-muted-foreground">
-                    No {formattedType} Yet
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="text-center">
-                  <p className="text-sm text-muted-foreground mb-4">
-                    You haven't created any {formattedType.toLowerCase()} yet.
-                    Start by creating your first one!
-                  </p>
-                  <Button>
-                    <FolderOpen className="h-4 w-4 mr-2" />
-                    Create {formattedType}
-                  </Button>
-                </CardContent>
-              </Card>
-            )}
-          </div>
+          <ItemsByTypeClient
+            items={items as ItemWithDetails[]}
+            typeName={type}
+          />
         </main>
       </div>
     </div>

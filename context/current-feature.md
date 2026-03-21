@@ -10,21 +10,36 @@
 - ✅ Two columns on medium and up (implemented: 1 col mobile, 2 col md, 3 col lg)
 - ✅ Each card has left border colored by item type
 - ✅ Follow existing codebase patterns
+- ✅ Add `getItemById()` query function
+- ✅ Create `/api/items/[id]` endpoint with auth
+- ✅ Build ItemDrawer client component using Sheet
+- ✅ Update ItemCard to trigger drawer on click
+- ✅ Integrate drawer into Dashboard page
+- ✅ Integrate drawer into Items/[type] page
+- ✅ Test drawer functionality
 
 ### Notes
 
 Feature implemented successfully:
 
-- Added `getItemsByType()` to `src/lib/db/items.ts`
-- Created `src/components/ItemCard.tsx` with type-based left border
-- Built `src/app/items/[type]/page.tsx` dynamic route
-- Responsive grid: `grid-cols-1 md:grid-cols-2 lg:grid-cols-3`
+- Added `getItemById()` to `src/lib/db/items.ts`
+- Created `/api/items/[id]` route with auth check and JSON response
+- Created `ItemDrawer.tsx` client component with:
+  - Right-side slide-in drawer using shadcn Sheet
+  - Skeleton loading state with pulse animation
+  - Action bar with Favorite, Pin, Copy, Edit, Delete buttons
+  - Full item details display (title, description, content, language, collections, dates)
+  - Proper handling of different content types (TEXT, URL, FILE)
+- Updated `ItemCard.tsx` to accept `onClick` prop instead of Link
+- Created `DashboardClient.tsx` wrapper to manage drawer state on dashboard
+- Created `ItemsByTypeClient.tsx` wrapper for items list pages
+- Integrated drawer into both Dashboard and Items/[type] pages
 - Build passes with no TypeScript errors
-- All pages load correctly: `/items/snippet`, `/items/prompt`, `/items/command`, `/items/note`, `/items/link`
+- Dev server runs successfully on http://localhost:3000
 
 ### References
 
-- Spec: `context/features/item-list-view-spec.md`
+- Spec: `context/features/item-drawer-spec.md`
 - Project Overview: `context/project-overview.md`
 - Coding Standards: `context/coding-standards.md`
 
@@ -82,7 +97,6 @@ Feature implemented successfully:
   - Protected `/api/auth/register` (3 attempts/hour, by IP)
   - Protected `/api/auth/forgot-password` (3 attempts/hour, by IP)
   - Protected `/api/auth/reset-password` (5 attempts/15min, by IP)
-  - Protected `/api/auth/verify-email` POST (3 attempts/15min, by IP+email)
   - Protected NextAuth credentials login (5 attempts/15min, by IP+email)
   - Returns 429 with `Retry-After` header
   - Fail-open when Upstash unavailable
@@ -94,3 +108,14 @@ Feature implemented successfully:
   - Type validation with 404 for invalid types
   - Empty state with call-to-action
   - Build successful, no TypeScript errors
+- **2026-03-21**: Item Drawer - Complete
+  - Branch: `feature/item-drawer`
+  - Added `getItemById()` to `src/lib/db/items.ts`
+  - Created `/api/items/[id]` route with auth check
+  - Created `ItemDrawer.tsx` client component using Sheet (right side)
+  - Updated `ItemCard.tsx` to use onClick prop instead of Link
+  - Created `DashboardClient.tsx` wrapper for dashboard drawer state
+  - Created `ItemsByTypeClient.tsx` wrapper for items list drawer state
+  - Integrated drawer into Dashboard and Items/[type] pages
+  - Build passes, no TypeScript errors
+  - Dev server runs successfully
