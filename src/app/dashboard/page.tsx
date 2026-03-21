@@ -196,10 +196,9 @@ export default async function DashboardPage() {
                 {collectionsData.map((collection) => (
                   <Card
                     key={collection.id}
-                    className="hover:shadow-md transition-shadow"
+                    className="hover:shadow-md transition-shadow border-l-4"
                     style={{
-                      borderColor: collection.dominantTypeColor + "40",
-                      borderWidth: "2px",
+                      borderLeftColor: collection.dominantTypeColor,
                     }}
                   >
                     <CardHeader className="pb-3">
@@ -286,61 +285,58 @@ export default async function DashboardPage() {
                   {pinnedItems.map((item) => (
                     <Card
                       key={item.id}
-                      className="hover:shadow-md transition-shadow"
+                      className="hover:shadow-md transition-shadow border-l-4"
+                      style={{
+                        borderLeftColor: item.itemType.color,
+                      }}
                     >
                       <CardContent className="p-4">
-                        <div className="flex items-start gap-3">
-                          <div
-                            className="h-8 w-1 rounded-full shrink-0"
-                            style={{ backgroundColor: item.itemType.color }}
-                          />
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-1">
-                              <h4 className="font-medium text-sm line-clamp-1">
-                                {item.title}
-                              </h4>
-                              <span
-                                className="text-xs px-2 py-0.5 rounded-full"
-                                style={{
-                                  backgroundColor: `${item.itemType.color}20`,
-                                  color: item.itemType.color,
-                                }}
-                              >
-                                {item.itemType.name}
-                              </span>
-                              {item.isPinned && (
-                                <Pin className="h-3 w-3 text-primary fill-primary" />
-                              )}
-                              {item.isFavorite && (
-                                <span className="text-red-500 text-sm">★</span>
-                              )}
-                            </div>
-                            {item.description && (
-                              <p className="text-sm text-muted-foreground line-clamp-2 mb-2">
-                                {item.description}
-                              </p>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <h4 className="font-medium text-sm line-clamp-1">
+                              {item.title}
+                            </h4>
+                            <span
+                              className="text-xs px-2 py-0.5 rounded-full"
+                              style={{
+                                backgroundColor: `${item.itemType.color}20`,
+                                color: item.itemType.color,
+                              }}
+                            >
+                              {item.itemType.name}
+                            </span>
+                            {item.isPinned && (
+                              <Pin className="h-3 w-3 text-primary fill-primary" />
                             )}
-                            <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                              <span>
-                                Updated{" "}
-                                {new Date(item.updatedAt).toLocaleDateString()}
-                              </span>
-                              {item.language && (
-                                <span className="capitalize">
-                                  {item.language}
-                                </span>
-                              )}
-                            </div>
+                            {item.isFavorite && (
+                              <span className="text-red-500 text-sm">★</span>
+                            )}
                           </div>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            asChild
-                            className="shrink-0"
-                          >
-                            <Link href={`/items/${item.id}`}>Open</Link>
-                          </Button>
+                          {item.description && (
+                            <p className="text-sm text-muted-foreground line-clamp-2 mb-2">
+                              {item.description}
+                            </p>
+                          )}
+                          <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                            <span>
+                              Updated{" "}
+                              {new Date(item.updatedAt).toLocaleDateString()}
+                            </span>
+                            {item.language && (
+                              <span className="capitalize">
+                                {item.language}
+                              </span>
+                            )}
+                          </div>
                         </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          asChild
+                          className="shrink-0"
+                        >
+                          <Link href={`/items/${item.id}`}>Open</Link>
+                        </Button>
                       </CardContent>
                     </Card>
                   ))}
@@ -361,61 +357,58 @@ export default async function DashboardPage() {
                   {favoriteItemsList.map((item) => (
                     <Card
                       key={item.id}
-                      className="hover:shadow-md transition-shadow"
+                      className="hover:shadow-md transition-shadow border-l-4"
+                      style={{
+                        borderLeftColor: item.itemType.color,
+                      }}
                     >
                       <CardContent className="p-4">
-                        <div className="flex items-start gap-3">
-                          <div
-                            className="h-8 w-1 rounded-full shrink-0"
-                            style={{ backgroundColor: item.itemType.color }}
-                          />
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-1">
-                              <h4 className="font-medium text-sm line-clamp-1">
-                                {item.title}
-                              </h4>
-                              <span
-                                className="text-xs px-2 py-0.5 rounded-full"
-                                style={{
-                                  backgroundColor: `${item.itemType.color}20`,
-                                  color: item.itemType.color,
-                                }}
-                              >
-                                {item.itemType.name}
-                              </span>
-                              {item.isPinned && (
-                                <Pin className="h-3 w-3 text-primary fill-primary" />
-                              )}
-                              {item.isFavorite && (
-                                <span className="text-red-500 text-sm">★</span>
-                              )}
-                            </div>
-                            {item.description && (
-                              <p className="text-sm text-muted-foreground line-clamp-2 mb-2">
-                                {item.description}
-                              </p>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <h4 className="font-medium text-sm line-clamp-1">
+                              {item.title}
+                            </h4>
+                            <span
+                              className="text-xs px-2 py-0.5 rounded-full"
+                              style={{
+                                backgroundColor: `${item.itemType.color}20`,
+                                color: item.itemType.color,
+                              }}
+                            >
+                              {item.itemType.name}
+                            </span>
+                            {item.isPinned && (
+                              <Pin className="h-3 w-3 text-primary fill-primary" />
                             )}
-                            <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                              <span>
-                                Updated{" "}
-                                {new Date(item.updatedAt).toLocaleDateString()}
-                              </span>
-                              {item.language && (
-                                <span className="capitalize">
-                                  {item.language}
-                                </span>
-                              )}
-                            </div>
+                            {item.isFavorite && (
+                              <span className="text-red-500 text-sm">★</span>
+                            )}
                           </div>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            asChild
-                            className="shrink-0"
-                          >
-                            <Link href={`/items/${item.id}`}>Open</Link>
-                          </Button>
+                          {item.description && (
+                            <p className="text-sm text-muted-foreground line-clamp-2 mb-2">
+                              {item.description}
+                            </p>
+                          )}
+                          <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                            <span>
+                              Updated{" "}
+                              {new Date(item.updatedAt).toLocaleDateString()}
+                            </span>
+                            {item.language && (
+                              <span className="capitalize">
+                                {item.language}
+                              </span>
+                            )}
+                          </div>
                         </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          asChild
+                          className="shrink-0"
+                        >
+                          <Link href={`/items/${item.id}`}>Open</Link>
+                        </Button>
                       </CardContent>
                     </Card>
                   ))}
@@ -436,67 +429,60 @@ export default async function DashboardPage() {
                   {recentItems.map((item) => (
                     <Card
                       key={item.id}
-                      className={cn(
-                        "hover:shadow-md transition-shadow",
-                        item.isPinned && "border-l-4",
-                        item.isPinned && "border-l-primary",
-                      )}
+                      className="hover:shadow-md transition-shadow border-l-4"
+                      style={{
+                        borderLeftColor: item.itemType.color,
+                      }}
                     >
                       <CardContent className="p-4">
-                        <div className="flex items-start gap-3">
-                          <div
-                            className="h-8 w-1 rounded-full shrink-0"
-                            style={{ backgroundColor: item.itemType.color }}
-                          />
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-1">
-                              <h4 className="font-medium text-sm line-clamp-1">
-                                {item.title}
-                              </h4>
-                              <span
-                                className="text-xs px-2 py-0.5 rounded-full"
-                                style={{
-                                  backgroundColor: `${item.itemType.color}20`,
-                                  color: item.itemType.color,
-                                }}
-                              >
-                                {item.itemType.name}
-                              </span>
-                              {item.isPinned && (
-                                <Pin className="h-3 w-3 text-primary fill-primary" />
-                              )}
-                              {item.isFavorite && (
-                                <span className="text-red-500 text-sm">★</span>
-                              )}
-                            </div>
-                            {item.description && (
-                              <p className="text-sm text-muted-foreground line-clamp-2 mb-2">
-                                {item.description}
-                              </p>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <h4 className="font-medium text-sm line-clamp-1">
+                              {item.title}
+                            </h4>
+                            <span
+                              className="text-xs px-2 py-0.5 rounded-full"
+                              style={{
+                                backgroundColor: `${item.itemType.color}20`,
+                                color: item.itemType.color,
+                              }}
+                            >
+                              {item.itemType.name}
+                            </span>
+                            {item.isPinned && (
+                              <Pin className="h-3 w-3 text-primary fill-primary" />
                             )}
-                            <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                              <span>
-                                Last used{" "}
-                                {new Date(
-                                  item.lastUsedAt || item.updatedAt,
-                                ).toLocaleDateString()}
-                              </span>
-                              {item.language && (
-                                <span className="capitalize">
-                                  {item.language}
-                                </span>
-                              )}
-                            </div>
+                            {item.isFavorite && (
+                              <span className="text-red-500 text-sm">★</span>
+                            )}
                           </div>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            asChild
-                            className="shrink-0"
-                          >
-                            <Link href={`/items/${item.id}`}>Open</Link>
-                          </Button>
+                          {item.description && (
+                            <p className="text-sm text-muted-foreground line-clamp-2 mb-2">
+                              {item.description}
+                            </p>
+                          )}
+                          <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                            <span>
+                              Last used{" "}
+                              {new Date(
+                                item.lastUsedAt || item.updatedAt,
+                              ).toLocaleDateString()}
+                            </span>
+                            {item.language && (
+                              <span className="capitalize">
+                                {item.language}
+                              </span>
+                            )}
+                          </div>
                         </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          asChild
+                          className="shrink-0"
+                        >
+                          <Link href={`/items/${item.id}`}>Open</Link>
+                        </Button>
                       </CardContent>
                     </Card>
                   ))}

@@ -87,6 +87,13 @@ Read the following to get the full context of the project:
 
   - 🛑 STOP: Wait for response. Only fix specified items and report changes.
 
+- **/research <prompt-name>**:
+  1. Look for prompt file at `context/research/{prompt-name}.md`.
+  2. Execute research based on file content: **Output** (target location), **Research** (investigation area), **Include** (details), and **Sources** (tools/files).
+  3. Use tools (Read files, Neon MCP, Search) to gather data.
+  4. Write findings to specified location (default `/docs/`).
+  5. **Rules**: Produces DOCUMENTATION only. Do NOT modify source code, create branches, or commits.
+
 ## Environment & Branch Safety (NEON MCP)
 
 - Default Context: Whenever using the neon MCP tools, always default to the following:
