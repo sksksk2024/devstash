@@ -1,12 +1,4 @@
-import { currentUser } from "@/lib/mock-data";
-import {
-  getRecentCollections,
-  getTotalItemCount,
-  getTotalCollectionCount,
-  getFavoriteCollectionCount,
-  getFavoriteItemCount,
-  getItemTypeStats,
-} from "@/lib/db/collections";
+import { getRecentCollections, getItemTypeStats } from "@/lib/db/collections";
 import {
   getFavoriteItems,
   getPinnedItems,
@@ -19,20 +11,12 @@ export default async function DashboardPage() {
   // Fetch real data from database
   const [
     collectionsData,
-    totalItems,
-    totalCollections,
-    favoriteCollections,
-    favoriteItemsCount,
     itemTypeStats,
     pinnedItems,
     recentItems,
     favoriteItemsList,
   ] = await Promise.all([
     getRecentCollections(6),
-    getTotalItemCount(),
-    getTotalCollectionCount(),
-    getFavoriteCollectionCount(),
-    getFavoriteItemCount(),
     getItemTypeStats(),
     getPinnedItems(5),
     getRecentItems(10),

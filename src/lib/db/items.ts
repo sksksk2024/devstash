@@ -44,6 +44,12 @@ export interface ItemWithDetails {
       name: string;
     };
   }[];
+  tags: {
+    tag: {
+      id: string;
+      name: string;
+    };
+  }[];
 }
 
 /**
@@ -68,6 +74,16 @@ export async function getFavoriteItems(
       collections: {
         include: {
           collection: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      },
+      tags: {
+        include: {
+          tag: {
             select: {
               id: true,
               name: true,
@@ -114,6 +130,16 @@ export async function getPinnedItems(
           },
         },
       },
+      tags: {
+        include: {
+          tag: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      },
     },
     orderBy: {
       updatedAt: "desc",
@@ -145,6 +171,16 @@ export async function getRecentItems(
       collections: {
         include: {
           collection: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      },
+      tags: {
+        include: {
+          tag: {
             select: {
               id: true,
               name: true,
@@ -212,6 +248,16 @@ export async function getItemsByType(
           },
         },
       },
+      tags: {
+        include: {
+          tag: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      },
     },
     orderBy: [
       {
@@ -247,6 +293,16 @@ export async function getItemById(id: string): Promise<ItemWithDetails | null> {
       collections: {
         include: {
           collection: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      },
+      tags: {
+        include: {
+          tag: {
             select: {
               id: true,
               name: true,

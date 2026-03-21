@@ -68,8 +68,8 @@ export default function ItemsByTypeClient({
             </CardHeader>
             <CardContent className="text-center">
               <p className="text-sm text-muted-foreground mb-4">
-                You haven't created any {formattedType.toLowerCase()} yet. Start
-                by creating your first one!
+                You haven&apos;t created any {formattedType.toLowerCase()} yet.
+                Start by creating your first one!
               </p>
               <button className="px-4 py-2 bg-primary text-primary-foreground rounded-md text-sm font-medium">
                 Create {formattedType}

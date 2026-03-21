@@ -29,3 +29,45 @@ export async function GET(
     );
   }
 }
+
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  try {
+    const session = await auth();
+
+    if (!session?.user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { id } = await params;
+    const body = await request.json();
+
+    // Import server action
+    const { updateItem } = await import("@/actions/items");
+    const result = await updateItem(id, body);
+
+    if (!result.success) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: result.error,
+          errors: result.errors,
+        },
+        { status: 400 },
+      );
+    }
+
+    return NextResponse.json({
+      success: true,
+      data: result.data,
+    });
+  } catch (error) {
+    console.error("Error updating item:", error);
+    return NextResponse.json(
+      { error: "Internal server error", success: false },
+      { status: 500 },
+    );
+  }
+}
