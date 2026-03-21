@@ -1,33 +1,12 @@
 # Current Feature
 
-## Profile Page
-
-**Status: Complete**
+## Status: Not Started
 
 ### Goals
 
-- [x] Create database function to fetch user stats (total items, collections, item type breakdown)
-- [x] Create profile page at `/profile` route with user info display (email, name, avatar, creation date)
-- [x] Implement usage stats section showing totals and item type breakdown
-- [x] Add change password functionality (only for email/password users)
-- [x] Add delete account with confirmation dialog
-- [x] Protect route with authentication
-- [x] Test the complete implementation
-
 ### Notes
 
-- Avatar: Use GitHub OAuth image if available, otherwise initials from name/email
-- Change password button only visible for credentials users (check `user.password` field)
-- Delete account requires confirmation dialog to prevent accidents
-- Item type breakdown: snippets, prompts, notes, commands, links, files, images
-- Follow existing patterns: server components for data fetching, client components for interactivity
-
 ### References
-
-- `prisma/schema.prisma` - User, Item, Collection, ItemType models
-- `src/auth.ts` - NextAuth configuration with credentials provider
-- `src/app/dashboard/page.tsx` - Example of data fetching and stats display
-- `src/components/Sidebar.tsx` - Example of avatar and user display
 
 ### Tasks
 
