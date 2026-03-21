@@ -1,15 +1,37 @@
 # Current Feature
 
-## Status: Not Started
+## Status: In Progress
 
 ### Goals
 
+- [ ] Create `ItemCreateDialog` component using shadcn Dialog
+- [ ] Implement type selector (snippet, prompt, command, note, link)
+- [ ] Build dynamic form fields based on selected type:
+  - All types: title (required), description, tags
+  - snippet/command: content, language
+  - prompt/note: content
+  - link: URL (required)
+- [ ] Create server action `createItem` with Zod validation
+- [ ] Add `createItem` query function to `src/lib/db/items.ts`
+- [ ] Integrate "New Item" button in top bar to open dialog
+- [ ] Implement toast notification on success
+- [ ] Close modal and refresh data after successful creation
+
 ### Notes
+
+- Use shadcn/ui Dialog component
+- Follow TypeScript strict mode
+- Ensure proper authentication checks
+- Validate all inputs with Zod schemas
+- Handle errors gracefully with user-friendly messages
 
 ### References
 
 - Project Overview: `context/project-overview.md`
 - Coding Standards: `context/coding-standards.md`
+- Feature Spec: `context/features/item-create-spec.md`
+- Item Types Research: `context/research/item-types-research.md`
+- Item CRUD Architecture: `docs/item-crud-architecture.md`
 
 ### Tasks
 

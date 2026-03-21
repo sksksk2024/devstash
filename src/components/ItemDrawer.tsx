@@ -629,7 +629,7 @@ export default function ItemDrawer({
             <AlertDialogHeader>
               <AlertDialogTitle>Delete Item</AlertDialogTitle>
               <AlertDialogDescription>
-                Are you sure you want to delete "{item?.title}"? This action
+                Are you sure you want to delete `{item?.title}`? This action
                 cannot be undone.
               </AlertDialogDescription>
             </AlertDialogHeader>

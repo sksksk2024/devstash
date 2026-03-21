@@ -7,7 +7,6 @@ import {
 import { auth } from "@/auth";
 import Sidebar from "@/components/Sidebar";
 import DashboardClient from "@/components/DashboardClient";
-import type { CollectionWithStats } from "@/lib/db/collections";
 
 export default async function DashboardPage() {
   const session = await auth();

@@ -70,7 +70,7 @@ describe("Database utilities - items", () => {
         id: mockUserId,
       });
       (prisma.item.findMany as ReturnType<typeof vi.fn>).mockResolvedValue(
-        mockItems as any,
+        mockItems,
       );
 
       const result = await getFavoriteItems(5);
@@ -128,7 +128,7 @@ describe("Database utilities - items", () => {
         id: mockUserId,
       });
       (prisma.item.findMany as ReturnType<typeof vi.fn>).mockResolvedValue(
-        mockItems as any,
+        mockItems,
       );
 
       const result = await getPinnedItems(5);
@@ -177,7 +177,7 @@ describe("Database utilities - items", () => {
         id: mockUserId,
       });
       (prisma.item.findMany as ReturnType<typeof vi.fn>).mockResolvedValue(
-        mockItems as any,
+        mockItems,
       );
 
       const result = await getRecentItems(10);
@@ -240,10 +240,10 @@ describe("Database utilities - items", () => {
         id: mockUserId,
       });
       (prisma.itemType.findFirst as ReturnType<typeof vi.fn>).mockResolvedValue(
-        mockItemType as any,
+        mockItemType,
       );
       (prisma.item.findMany as ReturnType<typeof vi.fn>).mockResolvedValue(
-        mockItems as any,
+        mockItems,
       );
 
       const result = await getItemsByType("Snippets", 10);
@@ -268,7 +268,7 @@ describe("Database utilities - items", () => {
         id: mockUserId,
       });
       (prisma.itemType.findFirst as ReturnType<typeof vi.fn>).mockResolvedValue(
-        mockItemType as any,
+        mockItemType,
       );
       (prisma.item.findMany as ReturnType<typeof vi.fn>).mockResolvedValue([]);
 

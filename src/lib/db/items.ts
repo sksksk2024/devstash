@@ -316,3 +316,162 @@ export async function getItemById(
 
   return item as ItemWithDetails | null;
 }
+
+/**
+ * Create a new item
+ */
+export async function createItem(
+  data: {
+    title: string;
+    description?: string | null;
+    contentType: "TEXT" | "FILE" | "URL";
+    content?: string | null;
+    fileUrl?: string | null;
+    fileName?: string | null;
+    fileSize?: number | null;
+    url?: string | null;
+    language?: string | null;
+    itemTypeName: string;
+    tags?: string[];
+  },
+  userId: string,
+): Promise<ItemWithDetails | null> {
+  // Find or create item type (system types are shared, user types are per-user)
+  const itemType = await prisma.itemType.upsert({
+    where: {
+      name_userId: {
+        name: data.itemTypeName,
+        userId: userId,
+      },
+    },
+    create: {
+      name: data.itemTypeName,
+      icon: getDefaultIconForType(data.itemTypeName),
+      color: getDefaultColorForType(data.itemTypeName),
+      isSystem: isSystemType(data.itemTypeName),
+      userId: isSystemType(data.itemTypeName) ? null : userId,
+    },
+    update: {},
+    include: {
+      items: true,
+    },
+  });
+
+  // Create the item
+  const item = await prisma.item.create({
+    data: {
+      title: data.title,
+      description: data.description,
+      contentType: data.contentType,
+      content: data.content,
+      fileUrl: data.fileUrl,
+      fileName: data.fileName,
+      fileSize: data.fileSize,
+      url: data.url,
+      language: data.language,
+      userId: userId,
+      itemTypeId: itemType.id,
+    },
+    include: {
+      itemType: true,
+      collections: {
+        include: {
+          collection: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  // Handle tags
+  if (data.tags && data.tags.length > 0) {
+    for (const tagName of data.tags) {
+      const trimmedName = tagName.trim();
+      if (!trimmedName) continue;
+
+      // Find or create tag
+      const tag = await prisma.tag.upsert({
+        where: { name: trimmedName },
+        update: {},
+        create: { name: trimmedName },
+      });
+
+      // Connect tag to item
+      await prisma.tagsOnItems.create({
+        data: {
+          itemId: item.id,
+          tagId: tag.id,
+        },
+      });
+    }
+  }
+
+  // Return the created item with tags
+  const result = await prisma.item.findUnique({
+    where: { id: item.id },
+    include: {
+      itemType: true,
+      collections: {
+        include: {
+          collection: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      },
+      tags: {
+        include: {
+          tag: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  return result as ItemWithDetails | null;
+}
+
+/**
+ * Helper function to get default icon for item type
+ */
+function getDefaultIconForType(typeName: string): string {
+  const icons: Record<string, string> = {
+    snippet: "Code",
+    command: "Terminal",
+    prompt: "Sparkles",
+    note: "FileText",
+    link: "Link",
+  };
+  return icons[typeName] || "Package";
+}
+
+/**
+ * Helper function to get default color for item type
+ */
+function getDefaultColorForType(typeName: string): string {
+  const colors: Record<string, string> = {
+    snippet: "#3b82f6", // blue
+    command: "#10b981", // green
+    prompt: "#8b5cf6", // purple
+    note: "#f59e0b", // amber
+    link: "#ef4444", // red
+  };
+  return colors[typeName] || "#6b7280"; // gray default
+}
+
+/**
+ * Helper function to check if a type is a system type
+ */
+function isSystemType(typeName: string): boolean {
+  return ["snippet", "prompt", "command", "note", "link"].includes(typeName);
+}

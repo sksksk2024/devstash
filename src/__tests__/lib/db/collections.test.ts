@@ -91,9 +91,9 @@ describe("Database utilities - collections", () => {
       });
       (
         prisma.collection.findMany as ReturnType<typeof vi.fn>
-      ).mockResolvedValue(mockCollections as any);
+      ).mockResolvedValue(mockCollections);
       (prisma.item.findMany as ReturnType<typeof vi.fn>).mockResolvedValue(
-        mockItems as any,
+        mockItems,
       );
 
       const result = await getRecentCollections(6);
@@ -146,9 +146,9 @@ describe("Database utilities - collections", () => {
       });
       (
         prisma.collection.findMany as ReturnType<typeof vi.fn>
-      ).mockResolvedValue(mockCollections as any);
+      ).mockResolvedValue(mockCollections);
       (prisma.item.findMany as ReturnType<typeof vi.fn>).mockResolvedValue(
-        mockItems as any,
+        mockItems,
       );
 
       const result = await getRecentCollections(6);
