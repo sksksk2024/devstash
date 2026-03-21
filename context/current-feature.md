@@ -1,45 +1,14 @@
-# Rate Limiting for Auth
+# Current Feature
 
-## Status: In Progress
+## Status: Not Started
 
 ### Goals
 
-- [ ] ADD rate limiting to auth-related API routes using Upstash Redis
-- [ ] Create reusable `src/lib/rate-limit.ts` utility with sliding window algorithm
-- [ ] Protect `/api/auth/register` (3 attempts per hour, by IP)
-- [ ] Protect `/api/auth/forgot-password` (3 attempts per hour, by IP)
-- [ ] Protect `/api/auth/reset-password` (5 attempts per 15 min, by IP)
-- [ ] Protect `/api/auth/resend-verification` (3 attempts per 15 min, by IP + email)
-- [ ] Handle NextAuth credentials login rate limiting (5 attempts per 15 min, by IP + email)
-- [ ] Return proper 429 responses with `Retry-After` header
-- [ ] Display user-friendly error messages on frontend
-- [ ] Ensure rate limiting fails open if Upstash unavailable
-
 ### Notes
-
-- Using `@upstash/ratelimit` with sliding window algorithm
-- IP extraction from `x-forwarded-for` or `x-real-ip` headers
-- Environment variables: `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`
-- Upstash free tier: 10k requests/day (sufficient)
-- Login rate limiting may require custom NextAuth sign-in handler
 
 ### References
 
-- Spec: `context/features/rate-limiting-spec.md`
-- Upstash Ratelimit: https://upstash.com/docs/ratelimit
-- NextAuth credentials provider: `src/auth.ts`
-
 ### Tasks
-
-- [ ] Create `src/lib/rate-limit.ts` utility
-- [ ] Implement IP extraction helper
-- [ ] Create rate limit middleware/handler
-- [ ] Protect each endpoint with appropriate limits
-- [ ] Test all endpoints
-- [ ] Verify error responses and frontend messages
-
-**History**
-**History**
 
 **History**
 
@@ -88,3 +57,13 @@
   - Added session callback in `auth.ts` to include user id in session
   - Created `alert-dialog` UI component
   - All lint warnings fixed, build successful
+- **2026-03-21**: Rate Limiting for Auth - Complete
+  - Created `src/lib/rate-limit.ts` utility with Upstash Redis sliding window
+  - Protected `/api/auth/register` (3 attempts/hour, by IP)
+  - Protected `/api/auth/forgot-password` (3 attempts/hour, by IP)
+  - Protected `/api/auth/reset-password` (5 attempts/15min, by IP)
+  - Protected `/api/auth/verify-email` POST (3 attempts/15min, by IP+email)
+  - Protected NextAuth credentials login (5 attempts/15min, by IP+email)
+  - Returns 429 with `Retry-After` header
+  - Fail-open when Upstash unavailable
+  - Build passes, lint clean
