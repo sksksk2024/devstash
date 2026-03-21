@@ -62,10 +62,11 @@ Read the following to get the full context of the project:
     4. 🛑 STOP: Display the explanation. DO NOT commit or merge.
 
   - **test**:
-    1. Identify new server actions/utilities.
-    2. Write unit tests using **Vitest** (happy path & error cases).
-    3. Run `npm test` and report coverage.
-    4. 🛑 STOP: Wait for user feedback.
+    1. **Check for testable logic for server actions and utilities.**
+    2. Identify new server actions/utilities.
+    3. Write unit tests using **Vitest** (happy path & error cases).
+    4. Run `npm test` and report coverage.
+    5. 🛑 STOP: Wait for user feedback.
 
   - **complete**:
     1. `git add .` and commit with a descriptive message.
