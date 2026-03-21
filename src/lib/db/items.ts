@@ -166,3 +166,63 @@ export async function getRecentItems(
 
   return items as ItemWithDetails[];
 }
+
+/**
+ * Get items filtered by type name for a specific user
+ */
+export async function getItemsByType(
+  typeName: string,
+  limit?: number,
+): Promise<ItemWithDetails[]> {
+  const userId = await getUserId();
+
+  if (!userId) {
+    return [];
+  }
+
+  // First, find the item type by name for this user (or system type)
+  const itemType = await prisma.itemType.findFirst({
+    where: {
+      name: typeName,
+      OR: [
+        { userId: null, isSystem: true }, // system type
+        { userId }, // user's custom type
+      ],
+    },
+  });
+
+  if (!itemType) {
+    return [];
+  }
+
+  const items = await prisma.item.findMany({
+    where: {
+      userId,
+      itemTypeId: itemType.id,
+    },
+    include: {
+      itemType: true,
+      collections: {
+        include: {
+          collection: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      },
+    },
+    orderBy: [
+      {
+        isPinned: "desc",
+      },
+      {
+        updatedAt: "desc",
+      },
+    ],
+    ...(limit && { take: limit }),
+  });
+
+  return items as ItemWithDetails[];
+}

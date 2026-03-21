@@ -1,12 +1,32 @@
 # Current Feature
 
-## Status: Not Started
+## Status: Complete
 
 ### Goals
 
+- ✅ Create dynamic route `/items/[type]`
+- ✅ Fetch and display items filtered by type
+- ✅ Responsive grid of ItemCard components
+- ✅ Two columns on medium and up (implemented: 1 col mobile, 2 col md, 3 col lg)
+- ✅ Each card has left border colored by item type
+- ✅ Follow existing codebase patterns
+
 ### Notes
 
+Feature implemented successfully:
+
+- Added `getItemsByType()` to `src/lib/db/items.ts`
+- Created `src/components/ItemCard.tsx` with type-based left border
+- Built `src/app/items/[type]/page.tsx` dynamic route
+- Responsive grid: `grid-cols-1 md:grid-cols-2 lg:grid-cols-3`
+- Build passes with no TypeScript errors
+- All pages load correctly: `/items/snippet`, `/items/prompt`, `/items/command`, `/items/note`, `/items/link`
+
 ### References
+
+- Spec: `context/features/item-list-view-spec.md`
+- Project Overview: `context/project-overview.md`
+- Coding Standards: `context/coding-standards.md`
 
 ### Tasks
 
@@ -67,3 +87,10 @@
   - Returns 429 with `Retry-After` header
   - Fail-open when Upstash unavailable
   - Build passes, lint clean
+- **2026-03-21**: Items List View - Complete
+  - Added `getItemsByType()` function to `src/lib/db/items.ts`
+  - Created `src/components/ItemCard.tsx` with type-based left border and responsive design
+  - Built dynamic route `src/app/items/[type]/page.tsx` with grid layout (1→2→3 columns)
+  - Type validation with 404 for invalid types
+  - Empty state with call-to-action
+  - Build successful, no TypeScript errors
