@@ -1,23 +1,29 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import ItemCard from "@/components/ItemCard";
 import ItemDrawer from "@/components/ItemDrawer";
 import type { ItemWithDetails } from "@/lib/db/items";
+import type { CollectionWithStats } from "@/lib/db/collections";
 
 interface DashboardClientProps {
   pinnedItems: ItemWithDetails[];
   recentItems: ItemWithDetails[];
   favoriteItems: ItemWithDetails[];
+  collections: CollectionWithStats[];
 }
 
 export default function DashboardClient({
-  pinnedItems,
-  recentItems,
-  favoriteItems,
+  pinnedItems: initialPinnedItems,
+  recentItems: initialRecentItems,
+  favoriteItems: initialFavoriteItems,
+  collections,
 }: DashboardClientProps) {
+  const [pinnedItems, setPinnedItems] = useState(initialPinnedItems);
+  const [recentItems, setRecentItems] = useState(initialRecentItems);
+  const [favoriteItems, setFavoriteItems] = useState(initialFavoriteItems);
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
@@ -33,12 +39,20 @@ export default function DashboardClient({
     }
   };
 
+  const handleDelete = useCallback((itemId: string) => {
+    // Remove item from all state arrays
+    setPinnedItems((prev) => prev.filter((item) => item.id !== itemId));
+    setRecentItems((prev) => prev.filter((item) => item.id !== itemId));
+    setFavoriteItems((prev) => prev.filter((item) => item.id !== itemId));
+  }, []);
+
   return (
     <>
       <ItemDrawer
         itemId={selectedItemId}
         open={isDrawerOpen}
         onOpenChange={handleDrawerOpenChange}
+        onDelete={handleDelete}
       />
 
       <div className="max-w-6xl mx-auto space-y-8">
@@ -46,7 +60,7 @@ export default function DashboardClient({
         <div>
           <h2 className="text-2xl font-bold tracking-tight">Welcome back!</h2>
           <p className="text-muted-foreground">
-            Here&apos;s what&apos;s happening with your collections today.
+            Here's what's happening with your collections today.
           </p>
         </div>
 
@@ -84,6 +98,68 @@ export default function DashboardClient({
             </CardContent>
           </Card>
         </div>
+
+        <Separator />
+
+        {/* Latest Collections */}
+        {collections.length > 0 && (
+          <section>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold flex items-center gap-2">
+                Latest Collections
+              </h3>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {collections.map((collection) => (
+                <Card
+                  key={collection.id}
+                  className="h-full border-l-4"
+                  style={{ borderLeftColor: collection.dominantTypeColor }}
+                >
+                  <CardContent className="pt-6">
+                    <div className="flex items-start justify-between mb-2">
+                      <h4 className="font-medium line-clamp-1">
+                        {collection.name}
+                      </h4>
+                      {collection.isFavorite && (
+                        <span className="text-yellow-500">★</span>
+                      )}
+                    </div>
+                    {collection.description && (
+                      <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
+                        {collection.description}
+                      </p>
+                    )}
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground mt-auto">
+                      <span className="font-medium">
+                        {collection.itemCount} items
+                      </span>
+                      {collection.contentTypes.length > 0 && (
+                        <>
+                          <span>•</span>
+                          <div className="flex items-center gap-1">
+                            {collection.contentTypes.slice(0, 2).map((type) => (
+                              <span
+                                key={type}
+                                className="px-1.5 py-0.5 rounded text-xs"
+                                style={{
+                                  backgroundColor: `${collection.dominantTypeColor}20`,
+                                  color: collection.dominantTypeColor,
+                                }}
+                              >
+                                {type}
+                              </span>
+                            ))}
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </section>
+        )}
 
         <Separator />
 

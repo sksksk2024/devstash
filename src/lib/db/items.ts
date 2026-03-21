@@ -57,16 +57,17 @@ export interface ItemWithDetails {
  */
 export async function getFavoriteItems(
   limit: number = 5,
+  userId?: string,
 ): Promise<ItemWithDetails[]> {
-  const userId = await getUserId();
+  const resolvedUserId = userId ?? (await getUserId());
 
-  if (!userId) {
+  if (!resolvedUserId) {
     return [];
   }
 
   const items = await prisma.item.findMany({
     where: {
-      userId,
+      userId: resolvedUserId,
       isFavorite: true,
     },
     include: {
@@ -106,16 +107,17 @@ export async function getFavoriteItems(
  */
 export async function getPinnedItems(
   limit: number = 5,
+  userId?: string,
 ): Promise<ItemWithDetails[]> {
-  const userId = await getUserId();
+  const resolvedUserId = userId ?? (await getUserId());
 
-  if (!userId) {
+  if (!resolvedUserId) {
     return [];
   }
 
   const items = await prisma.item.findMany({
     where: {
-      userId,
+      userId: resolvedUserId,
       isPinned: true,
     },
     include: {
@@ -155,16 +157,17 @@ export async function getPinnedItems(
  */
 export async function getRecentItems(
   limit: number = 10,
+  userId?: string,
 ): Promise<ItemWithDetails[]> {
-  const userId = await getUserId();
+  const resolvedUserId = userId ?? (await getUserId());
 
-  if (!userId) {
+  if (!resolvedUserId) {
     return [];
   }
 
   const items = await prisma.item.findMany({
     where: {
-      userId,
+      userId: resolvedUserId,
     },
     include: {
       itemType: true,
@@ -209,10 +212,11 @@ export async function getRecentItems(
 export async function getItemsByType(
   typeName: string,
   limit?: number,
+  userId?: string,
 ): Promise<ItemWithDetails[]> {
-  const userId = await getUserId();
+  const resolvedUserId = userId ?? (await getUserId());
 
-  if (!userId) {
+  if (!resolvedUserId) {
     return [];
   }
 
@@ -222,7 +226,7 @@ export async function getItemsByType(
       name: typeName,
       OR: [
         { userId: null, isSystem: true }, // system type
-        { userId }, // user's custom type
+        { userId: resolvedUserId }, // user's custom type
       ],
     },
   });
@@ -233,7 +237,7 @@ export async function getItemsByType(
 
   const items = await prisma.item.findMany({
     where: {
-      userId,
+      userId: resolvedUserId,
       itemTypeId: itemType.id,
     },
     include: {
@@ -276,13 +280,10 @@ export async function getItemsByType(
 /**
  * Get a single item by ID with full details
  */
-export async function getItemById(id: string): Promise<ItemWithDetails | null> {
-  const userId = await getUserId();
-
-  if (!userId) {
-    return null;
-  }
-
+export async function getItemById(
+  id: string,
+  userId: string,
+): Promise<ItemWithDetails | null> {
   const item = await prisma.item.findFirst({
     where: {
       id,

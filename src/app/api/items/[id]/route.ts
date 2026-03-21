@@ -14,7 +14,7 @@ export async function GET(
     }
 
     const { id } = await params;
-    const item = await getItemById(id);
+    const item = await getItemById(id, session.user.id);
 
     if (!item) {
       return NextResponse.json({ error: "Item not found" }, { status: 404 });
@@ -65,6 +65,45 @@ export async function PUT(
     });
   } catch (error) {
     console.error("Error updating item:", error);
+    return NextResponse.json(
+      { error: "Internal server error", success: false },
+      { status: 500 },
+    );
+  }
+}
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  try {
+    const session = await auth();
+
+    if (!session?.user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { id } = await params;
+
+    // Import server action
+    const { deleteItem } = await import("@/actions/items");
+    const result = await deleteItem(id);
+
+    if (!result.success) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: result.error,
+        },
+        { status: 400 },
+      );
+    }
+
+    return NextResponse.json({
+      success: true,
+    });
+  } catch (error) {
+    console.error("Error deleting item:", error);
     return NextResponse.json(
       { error: "Internal server error", success: false },
       { status: 500 },

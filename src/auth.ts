@@ -18,6 +18,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     jwt: async ({ token, user }) => {
       if (user) {
         token.id = user.id;
+      } else if (!token.id && token.sub) {
+        // For existing tokens that might not have id, use sub (which is the user ID)
+        token.id = token.sub as string;
       }
       return token;
     },

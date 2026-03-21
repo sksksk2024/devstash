@@ -7,6 +7,16 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -18,12 +28,14 @@ interface ItemDrawerProps {
   itemId: string | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onDelete?: (itemId: string) => void;
 }
 
 export default function ItemDrawer({
   itemId,
   open,
   onOpenChange,
+  onDelete,
 }: ItemDrawerProps) {
   const [item, setItem] = useState<ItemWithDetails | null>(null);
   const [loading, setLoading] = useState(false);
@@ -38,6 +50,8 @@ export default function ItemDrawer({
   });
   const [errors, setErrors] = useState<Record<string, string[]>>({});
   const [saving, setSaving] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     if (open && itemId) {
@@ -173,11 +187,45 @@ export default function ItemDrawer({
     toast.info("Changes discarded");
   };
 
-  const handleAction = async (action: string) => {
+  const handleAction = (action: string) => {
     if (action === "edit") {
       setIsEditMode(true);
+    } else if (action === "delete") {
+      setDeleteDialogOpen(true);
     } else {
       toast.info(`${action} action will be implemented later`);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!itemId) return;
+
+    setDeleting(true);
+    try {
+      const response = await fetch(`/api/items/${itemId}`, {
+        method: "DELETE",
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        toast.error(result.error || "Failed to delete item");
+        setDeleting(false);
+        return;
+      }
+
+      toast.success("Item deleted successfully");
+      setDeleteDialogOpen(false);
+      onOpenChange(false);
+
+      // Notify parent component about the deletion
+      if (onDelete) {
+        onDelete(itemId);
+      }
+    } catch (error) {
+      console.error("Error deleting item:", error);
+      toast.error("Failed to delete item");
+      setDeleting(false);
     }
   };
 
@@ -575,6 +623,38 @@ export default function ItemDrawer({
             Item not found
           </div>
         )}
+
+        <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete Item</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to delete "{item?.title}"? This action
+                cannot be undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleDelete();
+                }}
+                disabled={deleting}
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              >
+                {deleting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Deleting...
+                  </>
+                ) : (
+                  "Delete"
+                )}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </SheetContent>
     </Sheet>
   );

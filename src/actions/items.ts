@@ -197,3 +197,53 @@ export async function updateItem(
     };
   }
 }
+
+/**
+ * Delete an item by ID
+ */
+export async function deleteItem(itemId: string): Promise<{
+  success: boolean;
+  error?: string;
+}> {
+  try {
+    // Get session
+    const session = await auth();
+
+    if (!session?.user) {
+      return {
+        success: false,
+        error: "Unauthorized",
+      };
+    }
+
+    // Verify ownership and existence
+    const existingItem = await prisma.item.findFirst({
+      where: {
+        id: itemId,
+        userId: session.user.id,
+      },
+    });
+
+    if (!existingItem) {
+      return {
+        success: false,
+        error: "Item not found",
+      };
+    }
+
+    // Delete the item (cascade will handle tagsOnItems)
+    await prisma.item.delete({
+      where: { id: itemId },
+    });
+
+    return {
+      success: true,
+    };
+  } catch (error) {
+    console.error("Error deleting item:", error);
+    return {
+      success: false,
+      error: "Failed to delete item",
+    };
+  }
+}

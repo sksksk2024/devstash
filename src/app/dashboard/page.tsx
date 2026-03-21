@@ -4,10 +4,15 @@ import {
   getPinnedItems,
   getRecentItems,
 } from "@/lib/db/items";
+import { auth } from "@/auth";
 import Sidebar from "@/components/Sidebar";
 import DashboardClient from "@/components/DashboardClient";
+import type { CollectionWithStats } from "@/lib/db/collections";
 
 export default async function DashboardPage() {
+  const session = await auth();
+  const userId = session?.user?.id;
+
   // Fetch real data from database
   const [
     collectionsData,
@@ -18,9 +23,9 @@ export default async function DashboardPage() {
   ] = await Promise.all([
     getRecentCollections(6),
     getItemTypeStats(),
-    getPinnedItems(5),
-    getRecentItems(10),
-    getFavoriteItems(5),
+    getPinnedItems(5, userId),
+    getRecentItems(10, userId),
+    getFavoriteItems(5, userId),
   ]);
 
   return (
@@ -55,6 +60,7 @@ export default async function DashboardPage() {
             pinnedItems={pinnedItems}
             recentItems={recentItems}
             favoriteItems={favoriteItemsList}
+            collections={collectionsData}
           />
         </main>
       </div>
