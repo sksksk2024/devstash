@@ -141,3 +141,50 @@ Read the following to get the full context of the project:
   4. Constraint: Do not add authentication-related tasks.
 
   5. 🛑 STOP: Confirm the goals have been added to current-feature.md.
+
+### Auth Security Audit Subagent
+
+- **/auth-audit**:
+  1. Task: Perform a comprehensive security audit of authentication-related code, focusing on areas NextAuth does NOT handle automatically.
+
+  2. Scope: Audit the following areas:
+     - Password hashing (bcrypt rounds, algorithm)
+     - Rate limiting on auth endpoints (login, register, forgot password, verify email)
+     - Token security (generation, entropy, expiration, single-use enforcement)
+     - Email verification flow (token handling, expiration checks, cleanup)
+     - Password reset flow (token security, expiration, single-use, cleanup)
+     - Session validation on protected routes
+     - Profile page security (proper auth checks, safe update patterns)
+     - Sensitive data exposure in logs/errors
+     - Password policy enforcement (minimum length, complexity)
+     - OAuth user handling (edge cases, account linking)
+     - Database constraints (unique indexes, null handling)
+     - Race conditions in token operations
+
+  3. Exclusions: Do NOT flag issues that NextAuth handles automatically:
+     - CSRF protection
+     - Cookie security flags (HttpOnly, Secure, SameSite)
+     - OAuth state parameter
+     - JWT token signing
+
+  4. Methodology:
+     - Use `search_files` to find auth-related code patterns
+     - Use `read_file` to examine specific files in detail
+     - Use `list_files` to identify all auth endpoints
+     - Cross-reference with Prisma schema for database constraints
+     - Check for proper error handling that doesn't leak information
+     - Verify token cleanup and single-use enforcement
+     - Check rate limiting implementation (or note its absence)
+
+  5. Output Requirements:
+     - Create `docs/audit-results/` directory if it doesn't exist
+     - Write findings to `docs/audit-results/AUTH_SECURITY_REVIEW.md`
+     - Overwrite previous audit (always fresh report)
+     - Include audit date at the top
+     - Group findings by severity: Critical, High, Medium, Low
+     - For each finding: file path, line numbers, description, suggested fix
+     - Include a "Passed Checks" section listing what was verified correctly
+     - Be conservative: only report actual security issues, not hypothetical ones
+     - If unsure about something, use web search to verify before reporting
+
+  6. 🛑 STOP: Display the audit report summary and point to the full file.
